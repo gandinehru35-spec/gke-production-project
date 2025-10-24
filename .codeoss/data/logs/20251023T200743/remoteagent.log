@@ -1,0 +1,19 @@
+2025-10-23 20:07:43.309 [info] 
+
+
+
+
+2025-10-23 20:07:43.348 [info] Extension host agent started.
+2025-10-23 20:07:48.552 [info] [127.0.0.1][2611e1af][ManagementConnection] New connection established.
+2025-10-23 20:07:48.611 [info] [127.0.0.1][ad296e8a][ExtensionHostConnection] New connection established.
+2025-10-23 20:07:49.460 [info] [127.0.0.1][ad296e8a][ExtensionHostConnection] <1252> Launched Extension Host Process.
+2025-10-23 21:43:58.156 [info] [127.0.0.1][ad296e8a][ExtensionHostConnection] The client has reconnected.
+2025-10-23 21:43:58.313 [info] [127.0.0.1][2611e1af][ManagementConnection] The client has reconnected.
+2025-10-23 22:02:41.078 [info] [127.0.0.1][2611e1af][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+2025-10-23 22:16:16.185 [info] [127.0.0.1][2611e1af][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+2025-10-23 22:16:16.186 [info] [127.0.0.1][2611e1af][ManagementConnection] The client has reconnected.
+2025-10-23 22:16:16.327 [info] [127.0.0.1][ad296e8a][ExtensionHostConnection] The client has reconnected.
+2025-10-23 22:34:01.140 [info] [127.0.0.1][2611e1af][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+2025-10-23 22:48:08.522 [info] [127.0.0.1][2611e1af][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+2025-10-23 22:48:08.523 [info] [127.0.0.1][2611e1af][ManagementConnection] The client has reconnected.
+2025-10-23 22:48:08.664 [info] [127.0.0.1][ad296e8a][ExtensionHostConnection] The client has reconnected.

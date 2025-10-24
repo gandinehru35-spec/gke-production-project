@@ -1,0 +1,26 @@
+# helm/my-gke-app/values.yaml
+replicaCount: 3
+
+# Image configuration - crucial for CI/CD integration
+backend:
+  image:
+    repository: gcr.io/alpine-anvil-473102-c4/backend-api # Placeholder for CI-built image
+    tag: latest # Overridden by CI/CD pipeline on release
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+
+frontend:
+  image:
+    repository: gcr.io/alpine-anvil-473102-c4/frontend-ui # Placeholder
+    tag: latest # Overridden by CI/CD pipeline on release
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer # Can be toggled for internal/external access
+    port: 80
+
+ingress:
+  enabled: true
+  host: gke-project.example.com
+  staticIPName: frontend-service
+  certificateName: gke-app-cert

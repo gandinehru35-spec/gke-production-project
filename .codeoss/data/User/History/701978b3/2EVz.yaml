@@ -1,0 +1,77 @@
+# Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+  labels:
+    app: microservice
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: backend
+  template:
+    metadata:
+      labels:
+        tier: backend
+    spec:
+      containers:
+      - name: backend-container
+        image: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/backend-api:latest
+        ports:
+        - containerPort: 8080
+---
+# Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    tier: backend
+spec:
+  selector:
+    tier: backend
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
+---
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-ui
+  labels:
+    app: microservice
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/frontend-ui:latest
+        ports:
+        - containerPort: 80
+---
+# Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    tier: frontend
+spec:
+  selector:
+    tier: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer

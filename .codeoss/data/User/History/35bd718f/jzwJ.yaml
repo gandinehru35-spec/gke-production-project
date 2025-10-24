@@ -1,0 +1,16 @@
+replicaCount: 2
+backend:
+  image:
+    repository: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/backend-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 8080
+frontend:
+  image:
+    repository: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/frontend-ui
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80

@@ -1,0 +1,147 @@
+2025-10-19 04:33:39.024 [info] [main] Log level: Info
+2025-10-19 04:33:39.024 [info] [main] Validating found git in: "git"
+2025-10-19 04:33:39.024 [info] [main] Using git "2.43.0" from "git"
+2025-10-19 04:33:39.025 [info] [Model][doInitialScan] Initial repository scan started
+2025-10-19 04:33:39.025 [info] > git rev-parse --show-toplevel [15ms]
+2025-10-19 04:33:39.025 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:39.026 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:33:39.026 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:39.034 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 04:33:39.034 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:39.050 [info] > git rev-parse --show-toplevel [10ms]
+2025-10-19 04:33:39.050 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:39.059 [info] > git rev-parse --show-toplevel [1ms]
+2025-10-19 04:33:39.059 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:39.066 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 04:33:39.066 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.098 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 04:33:41.098 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.114 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 04:33:41.118 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.126 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 04:33:41.126 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.138 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 04:33:41.139 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.311 [info] > git rev-parse --show-toplevel [164ms]
+2025-10-19 04:33:41.311 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:41.322 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 04:33:41.322 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:44.145 [info] > git rev-parse --show-toplevel [326ms]
+2025-10-19 04:33:44.196 [info] > git rev-parse --git-dir --git-common-dir [32ms]
+2025-10-19 04:33:44.218 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35/anthos-service-mesh-samples
+2025-10-19 04:33:44.218 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35/anthos-service-mesh-samples
+2025-10-19 04:33:44.360 [info] > git rev-parse --show-toplevel [109ms]
+2025-10-19 04:33:44.361 [info] > git config --get commit.template [119ms]
+2025-10-19 04:33:44.393 [info] > git rev-parse --git-dir --git-common-dir [19ms]
+2025-10-19 04:33:44.400 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35/my-gke-app
+2025-10-19 04:33:44.400 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35/my-gke-app
+2025-10-19 04:33:44.401 [info] [Model][doInitialScan] Initial repository scan completed - repositories (2), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2025-10-19 04:33:44.445 [info] > git rev-parse --show-toplevel [26ms]
+2025-10-19 04:33:44.445 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:33:44.445 [info] > git config --get commit.template [35ms]
+2025-10-19 04:33:44.507 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [33ms]
+2025-10-19 04:33:44.535 [info] > git status -z -uall [15ms]
+2025-10-19 04:33:44.537 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [4ms]
+2025-10-19 04:33:44.577 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [19ms]
+2025-10-19 04:33:44.586 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [203ms]
+2025-10-19 04:33:44.589 [info] > git config --get commit.template [18ms]
+2025-10-19 04:33:44.598 [warning] [Git][revParse] Unable to read file: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/refs/remotes/origin/main'
+2025-10-19 04:33:44.599 [info] > git config --get --local branch.main.vscode-merge-base [13ms]
+2025-10-19 04:33:44.599 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-19 04:33:44.661 [info] > git rev-parse refs/remotes/origin/main [63ms]
+2025-10-19 04:33:44.701 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [82ms]
+2025-10-19 04:33:44.701 [info] > git reflog main --grep-reflog=branch: Created from *. [92ms]
+2025-10-19 04:33:44.715 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [37ms]
+2025-10-19 04:33:44.717 [info] > git symbolic-ref --short refs/remotes/origin/HEAD [6ms]
+2025-10-19 04:33:44.717 [info] fatal: ref refs/remotes/origin/HEAD is not a symbolic ref
+2025-10-19 04:33:44.717 [warning] [Repository][getDefaultBranch] Failed to get default branch details: Failed to execute git.
+2025-10-19 04:33:44.747 [info] > git status -z -uall [9ms]
+2025-10-19 04:33:44.748 [info] > git merge-base refs/heads/main refs/remotes/origin/main [23ms]
+2025-10-19 04:33:44.758 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [12ms]
+2025-10-19 04:33:44.775 [info] > git merge-base refs/heads/main refs/remotes/origin/main [6ms]
+2025-10-19 04:33:44.786 [info] > git diff --name-status -z --diff-filter=ADMR e1be705dfbdb06cde6224ee58e9baaf586bdbe4d...refs/remotes/origin/main [29ms]
+2025-10-19 04:33:44.790 [info] > git diff --name-status -z --diff-filter=ADMR e1be705dfbdb06cde6224ee58e9baaf586bdbe4d...refs/remotes/origin/main [5ms]
+2025-10-19 04:33:44.935 [info] > git status -z -uall [266ms]
+2025-10-19 04:33:44.962 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [13ms]
+2025-10-19 04:33:44.973 [info] > git config --get commit.template [13ms]
+2025-10-19 04:33:44.983 [info] > git config --get --local branch.main.vscode-merge-base [11ms]
+2025-10-19 04:33:44.993 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [11ms]
+2025-10-19 04:33:45.002 [warning] [Git][revParse] Unable to read file: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/refs/remotes/origin/main'
+2025-10-19 04:33:45.033 [info] > git check-ignore -v -z --stdin [20ms]
+2025-10-19 04:33:45.033 [info] > git check-ignore -v -z --stdin [4ms]
+2025-10-19 04:33:45.034 [info] > git rev-parse refs/remotes/origin/main [33ms]
+2025-10-19 04:33:45.052 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/origin/main refs/remotes/origin/main [60ms]
+2025-10-19 04:33:45.068 [info] > git merge-base refs/heads/main refs/remotes/origin/main [6ms]
+2025-10-19 04:33:45.077 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [26ms]
+2025-10-19 04:33:45.079 [info] > git status -z -uall [37ms]
+2025-10-19 04:33:45.092 [info] > git diff --name-status -z --diff-filter=ADMR b41c31d0e31afb953fa17af9339e5204a740e2bc...refs/remotes/origin/main [15ms]
+2025-10-19 04:33:45.093 [info] > git merge-base refs/heads/main refs/remotes/origin/main [3ms]
+2025-10-19 04:33:45.107 [info] > git diff --name-status -z --diff-filter=ADMR b41c31d0e31afb953fa17af9339e5204a740e2bc...refs/remotes/origin/main [5ms]
+2025-10-19 04:33:53.089 [info] > git check-ignore -v -z --stdin [23ms]
+2025-10-19 04:33:53.289 [info] > git ls-files --stage -- backend/app.py [9ms]
+2025-10-19 04:33:53.389 [info] > git show --textconv :backend/app.py [122ms]
+2025-10-19 04:33:53.448 [info] > git cat-file -s 90b9e5ba02270df0f6ae756af575579cfd979260 [139ms]
+2025-10-19 04:33:53.697 [info] > git blame --root --incremental e1be705dfbdb06cde6224ee58e9baaf586bdbe4d -- backend/app.py [13ms]
+2025-10-19 04:33:54.534 [info] > git show --textconv :backend/Dockerfile [22ms]
+2025-10-19 04:33:54.541 [info] > git ls-files --stage -- backend/Dockerfile [10ms]
+2025-10-19 04:33:54.562 [info] > git cat-file -s 0d85a5bd0cd208a97ca683315f44e02d3be37826 [3ms]
+2025-10-19 04:33:54.640 [info] > git blame --root --incremental e1be705dfbdb06cde6224ee58e9baaf586bdbe4d -- backend/Dockerfile [8ms]
+2025-10-19 04:34:04.595 [info] > git rev-parse --show-toplevel [7ms]
+2025-10-19 04:34:04.595 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:34:05.612 [warning] [Git][getHEAD] Failed to parse HEAD file: ENOENT: no such file or directory, open '/home/gandinehru35/my-gke-app/.git/HEAD'
+2025-10-19 04:34:05.633 [warning] [Git][getRemotes] Error: ENOENT: no such file or directory, open '/home/gandinehru35/my-gke-app/.git/config'
+2025-10-19 04:34:05.660 [warning] [Git][getHEAD] Failed to parse HEAD file: ENOENT: no such file or directory, open '/home/gandinehru35/my-gke-app/.git/HEAD'
+2025-10-19 04:34:05.681 [warning] [Git][getRemotes] Error: ENOENT: no such file or directory, open '/home/gandinehru35/my-gke-app/.git/config'
+2025-10-19 04:34:06.315 [info] > git check-ignore -v -z --stdin [2ms]
+2025-10-19 04:34:08.870 [info] > git check-ignore -v -z --stdin [3ms]
+2025-10-19 04:34:26.475 [info] > git rev-parse --show-toplevel [6ms]
+2025-10-19 04:34:26.475 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:34:27.487 [warning] [Git][getHEAD] Failed to parse HEAD file: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/HEAD'
+2025-10-19 04:34:27.508 [warning] [Git][getRemotes] Error: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/config'
+2025-10-19 04:34:27.532 [warning] [Git][getHEAD] Failed to parse HEAD file: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/HEAD'
+2025-10-19 04:34:27.553 [warning] [Git][getRemotes] Error: ENOENT: no such file or directory, open '/home/gandinehru35/anthos-service-mesh-samples/.git/config'
+2025-10-19 04:35:08.429 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:35:08.429 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:35:24.598 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:35:24.599 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:35:38.883 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:35:38.883 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:36:05.627 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:36:05.627 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:36:17.330 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:36:17.330 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:36:27.903 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:36:27.903 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:36:39.450 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 04:36:39.450 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:37:15.001 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 04:37:15.001 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:37:24.999 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 04:37:25.000 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 04:37:36.203 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 04:37:36.203 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).

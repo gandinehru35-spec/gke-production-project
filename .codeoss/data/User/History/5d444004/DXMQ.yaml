@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: gke-app-cert
+spec:
+  # Replace this with your actual domain/subdomain
+  domains:
+    - gke-project.example.com

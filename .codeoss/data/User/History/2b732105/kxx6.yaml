@@ -1,0 +1,64 @@
+# 1. Default Deny Policy (Applies to ALL pods in the namespace)
+# This is crucial for a secure baseline.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: default
+spec:
+  podSelector: {} # Selects all pods in the 'default' namespace
+  policyTypes:
+  - Ingress
+  - Egress # Also deny outbound, though we will override below
+---
+# 2. Policy to allow Frontend -> Backend communication (Ingress to Backend)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend # Applies to pods with label tier: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tier: frontend # Allows traffic ONLY from pods with label tier: frontend
+    ports:
+    - protocol: TCP
+      port: 8080 # The backend container port
+---
+# 3. Policy to allow Backend -> Redis communication (Egress from Backend)
+# Note: We need to allow Egress for the backend to talk to Redis (and DNS/outside services)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-egress
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend # Applies to pods with label tier: backend
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis # Allows traffic to the redis pod
+    ports:
+    - protocol: TCP
+      port: 6379 # The Redis container port (if using the example from Phase 1)
+  - to:
+    # Allow DNS resolution (essential for any pod to function)
+    - namespaceSelector: {} # Selects all namespaces
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns # Adjust if using coredns or other DNS service
+    ports:
+    - protocol: UDP
+      port: 53

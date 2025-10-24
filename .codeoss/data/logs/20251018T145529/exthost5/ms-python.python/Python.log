@@ -1,0 +1,33 @@
+2025-10-18 18:56:03.039 [warning] Dir "/home/gandinehru35/.pixi/envs" is not watchable (directory does not exist)
+2025-10-18 18:56:03.039 [info] Starting Environment refresh
+2025-10-18 18:56:03.039 [info] Searching for interpreters in posix paths locator
+2025-10-18 18:56:03.039 [info] Searching for pyenv environments
+2025-10-18 18:56:03.039 [info] Searching for conda environments
+2025-10-18 18:56:03.039 [info] Searching for global virtual environments
+2025-10-18 18:56:03.039 [info] Searching for custom virtual environments
+2025-10-18 18:56:03.039 [info] pyenv is not installed
+2025-10-18 18:56:03.039 [info] Finished searching for pyenv environments: 15 milliseconds
+2025-10-18 18:56:03.039 [info] Finished searching for custom virtual envs: 14 milliseconds
+2025-10-18 18:56:03.039 [info] > conda info --json
+2025-10-18 18:56:03.039 [info] > hatch env show --json
+2025-10-18 18:56:03.039 [info] cwd: .
+2025-10-18 18:56:03.039 [info] > pyenv which python
+2025-10-18 18:56:03.039 [info] cwd: .
+2025-10-18 18:56:03.039 [info] Finished searching for global virtual envs: 54 milliseconds
+2025-10-18 18:56:03.040 [info] Found: /bin/python --> /bin/python3.12
+2025-10-18 18:56:03.041 [info] Found: /bin/python3 --> /bin/python3.12
+2025-10-18 18:56:03.042 [info] Found: /bin/python3.12 --> /bin/python3.12
+2025-10-18 18:56:03.068 [info] Found: /usr/bin/python --> /usr/bin/python3.12
+2025-10-18 18:56:03.069 [info] Found: /usr/bin/python3 --> /usr/bin/python3.12
+2025-10-18 18:56:03.070 [info] Found: /usr/bin/python3.12 --> /usr/bin/python3.12
+2025-10-18 18:56:03.121 [info] Finished searching for interpreters in posix paths locator: 144 milliseconds
+2025-10-18 18:56:03.121 [info] > /bin/python -I /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/get_output_via_markers.py /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/interpreterInfo.py
+2025-10-18 18:56:03.141 [info] > /usr/bin/python -I /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/get_output_via_markers.py /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/interpreterInfo.py
+2025-10-18 18:56:03.141 [info] Environments refresh paths discovered (event): 175 milliseconds
+2025-10-18 18:56:03.142 [info] Environments refresh paths discovered: 176 milliseconds
+2025-10-18 18:56:03.190 [info] Environments refresh finished (event): 224 milliseconds
+2025-10-18 18:56:03.200 [info] Environment refresh took 235 milliseconds
+2025-10-18 18:56:03.204 [info] Python interpreter path: /bin/python
+2025-10-18 18:56:05.309 [info] Starting Jedi language server for gandinehru35.
+2025-10-18 18:56:56.762 [info] Discover tests for workspace name: gandinehru35 - uri: /home/gandinehru35/my-gke-app/backend/app.py
+2025-10-18 18:56:57.640 [info] Discover tests for workspace name: gandinehru35 - uri: /home/gandinehru35/my-gke-app/backend/app.py

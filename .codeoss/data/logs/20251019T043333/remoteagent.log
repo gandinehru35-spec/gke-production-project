@@ -1,0 +1,16 @@
+2025-10-19 04:33:34.149 [info] 
+
+
+
+
+2025-10-19 04:33:34.201 [info] Extension host agent started.
+2025-10-19 04:33:36.245 [info] [127.0.0.1][9ac73c91][ManagementConnection] New connection established.
+2025-10-19 04:33:36.248 [info] [127.0.0.1][09cb3b1e][ExtensionHostConnection] New connection established.
+2025-10-19 04:33:37.087 [info] [127.0.0.1][09cb3b1e][ExtensionHostConnection] <3641> Launched Extension Host Process.
+2025-10-19 04:34:04.473 [warning] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+2025-10-19 04:34:04.476 [warning] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+2025-10-19 04:34:25.810 [warning] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+2025-10-19 04:50:40.271 [info] [127.0.0.1][09cb3b1e][ExtensionHostConnection] The client has reconnected.
+2025-10-19 04:50:40.410 [info] [127.0.0.1][9ac73c91][ManagementConnection] The client has reconnected.
+2025-10-19 04:56:25.646 [info] [127.0.0.1][09cb3b1e][ExtensionHostConnection] The client has reconnected.
+2025-10-19 05:08:07.051 [info] [127.0.0.1][9ac73c91][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...

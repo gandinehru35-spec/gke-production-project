@@ -1,0 +1,50 @@
+2025-10-19 18:38:18.009 [info] [main] Log level: Info
+2025-10-19 18:38:18.009 [info] [main] Validating found git in: "git"
+2025-10-19 18:38:18.009 [info] [main] Using git "2.43.0" from "git"
+2025-10-19 18:38:18.009 [info] [Model][doInitialScan] Initial repository scan started
+2025-10-19 18:38:18.009 [info] > git rev-parse --show-toplevel [2009ms]
+2025-10-19 18:38:18.009 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.009 [info] > git rev-parse --show-toplevel [10ms]
+2025-10-19 18:38:18.009 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.009 [info] > git rev-parse --show-toplevel [325ms]
+2025-10-19 18:38:18.009 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.139 [info] > git rev-parse --show-toplevel [42ms]
+2025-10-19 18:38:18.139 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.208 [info] > git rev-parse --show-toplevel [58ms]
+2025-10-19 18:38:18.208 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.252 [info] > git rev-parse --show-toplevel [13ms]
+2025-10-19 18:38:18.252 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.266 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-19 18:38:18.267 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.282 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 18:38:18.282 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.302 [info] > git rev-parse --show-toplevel [9ms]
+2025-10-19 18:38:18.302 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.316 [info] > git rev-parse --show-toplevel [1ms]
+2025-10-19 18:38:18.317 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.329 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 18:38:18.329 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.342 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-19 18:38:18.342 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.356 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 18:38:18.356 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.367 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-19 18:38:18.367 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.402 [info] > git rev-parse --show-toplevel [25ms]
+2025-10-19 18:38:18.402 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2025-10-19 18:38:18.403 [info] [Model][doInitialScan] Initial repository scan completed - repositories (0), closed repositories (0), parent repositories (0), unsafe repositories (0)

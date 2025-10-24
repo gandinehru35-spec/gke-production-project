@@ -1,0 +1,4 @@
+[Error - 6:38:24 PM] (node:1351) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[Error - 6:38:29 PM] Error making request: The user aborted a request.
+[Error - 6:38:30 PM] Error making request: The user aborted a request.

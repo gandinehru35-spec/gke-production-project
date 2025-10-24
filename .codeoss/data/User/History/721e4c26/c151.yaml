@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: bank-cert
+spec:
+  domains:
+  - YOUR_DOMAIN_HERE   # optional; or remove annotation to get LB without cert

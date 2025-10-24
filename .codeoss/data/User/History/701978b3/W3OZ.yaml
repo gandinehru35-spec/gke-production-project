@@ -1,0 +1,77 @@
+# 1. Backend Deployment (Example: Python/Go API)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+  labels:
+    app: app-microservice
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: backend
+  template:
+    metadata:
+      labels:
+        tier: backend
+    spec:
+      containers:
+      - name: backend-container
+        image: us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0
+        ports:
+        - containerPort: 8080
+---
+# 2. Backend Service (Internal communication only)
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    tier: backend
+spec:
+  selector:
+    tier: backend
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP # Only accessible within the cluster
+---
+# 3. Frontend Deployment (Example: NGINX/Web UI)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-ui
+  labels:
+    app: app-microservice
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+---
+# 4. Frontend Service (To expose the application externally)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    tier: frontend
+spec:
+  selector:
+    tier: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer # Requests a GCP Network Load Balancer

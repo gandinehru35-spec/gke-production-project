@@ -1,0 +1,37 @@
+Initializing document watcher...
+Document watcher initialized
+gandinehru35/my-gke-app/frontend/index.html: {}
+gandinehru35/my-gke-app/frontend/Dockerfile: {}
+gandinehru35/my-gke-app/backend/app.py: {}
+gandinehru35/my-gke-app/backend/Dockerfile: {}
+gandinehru35/network-policy.yaml: {}
+gandinehru35/pvc.yaml: {}
+No more open editors.
+No more open editors.
+gandinehru35/banking-app/app.py: {}
+gandinehru35/banking-app/requirements.txt: {}
+gandinehru35/banking-app/requirements.txt: {}
+gandinehru35/banking-app/requirements.txt: {}
+gandinehru35/banking-app/Dockerfile: {}
+gandinehru35/banking-app/Dockerfile: {}
+gandinehru35/banking-app/k8s/deployment.yaml: {}
+gandinehru35/banking-app/k8s/deployment.yaml: {}
+gandinehru35/banking-app/k8s/service.yaml: {}
+gandinehru35/banking-app/k8s/service.yaml: {}
+gandinehru35/banking-app/k8s/secret.yaml: {}
+gandinehru35/banking-app/k8s/secret.yaml: {}
+gandinehru35/banking-app/k8s/ingress.yaml: {}
+gandinehru35/banking-app/k8s/ingress.yaml: {}
+gandinehru35/banking-app/k8s/ingress.yaml: {}
+gandinehru35/banking-app/requirements.txt: {}
+gandinehru35/banking-app/requirements.txt: Using EditorConfig core...
+gandinehru35/banking-app/requirements.txt: Using EditorConfig core...
+gandinehru35/banking-app/app.py: {}
+gandinehru35/banking-app/app.py: {}
+gandinehru35/banking-app/app.py: Using EditorConfig core...
+gandinehru35/banking-app/app.py: Using EditorConfig core...
+gandinehru35/banking-app/Dockerfile: {}
+gandinehru35/banking-app/Dockerfile: {}
+gandinehru35/banking-app/Dockerfile: Using EditorConfig core...
+gandinehru35/banking-app/Dockerfile: Using EditorConfig core...
+gandinehru35/banking-app/Dockerfile: {}
