@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prod-reader
+  namespace: prod
+rules:
+- apiGroups: ["", "apps", "autoscaling", "networking.k8s.io"]
+  resources: ["pods", "deployments", "services", "ingresses", "hpas", "networkpolicies"]
+  verbs: ["get", "list", "watch"]

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # --- FIX 1 (The REAL fix) ---
+    # This block allows traffic from the GKE Ingress/Health Checkers
+    # by their specific IP ranges.
+    - ipBlock:
+        cidr: 130.211.0.0/22
+    - ipBlock:
+        cidr: 35.191.0.0/16
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- FIX 2 (For your load test) ---
+    # This allows traffic from ANY pod in our own 'prod' namespace.
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port

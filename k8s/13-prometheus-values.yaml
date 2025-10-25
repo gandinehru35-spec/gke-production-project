@@ -1,0 +1,7 @@
+# This file overrides the defaults of the kube-prometheus-stack Helm chart
+grafana:
+  persistence:
+    enabled: true
+    type: pvc
+    size: 10Gi
+    # GKE's default StorageClass will be used

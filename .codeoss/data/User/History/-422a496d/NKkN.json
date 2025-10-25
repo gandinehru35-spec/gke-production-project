@@ -1,0 +1,5 @@
+{
+    "chat.commandCenter.enabled": false,
+    "window.menuBarVisibility": "classic",
+    "window.commandCenter": true
+}

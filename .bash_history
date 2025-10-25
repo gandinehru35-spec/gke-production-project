@@ -1,564 +1,1378 @@
-git config --global user.email "gandinehru35@gmail.com"
-cd my-gke-app
-git init
-git add .
-git commit -m "Initial project"
-git remote add origin https://github.com/<your-username>/gke-interview-project.git
-git push -u origin main
-git config --global user.email "gandinehru35@gmail.com"
-git config --global user.name "gandinehru35-spec"
-git init
-git add .
-git commit -m "Initial project"
-git remote add origin https://github.com/gandinehru35-spec/gke-interview-project.git
-git push -u origin main
-cd my-gke-app
-git init
-git add .
-git commit -m "Initial project"
-git remote add origin https://github.com/gandinehru35-spec/gke-interview-project.git
-git push -u origin main
-pwd
-cd my-gke-app
-cd ~
-pwd
-cd my-gke-app
-ls
-mkdir -p backend frontend helm/my-gke-app/templates
-ls
-mv /home/gandinehru35/my-gke-app/frontend/my-gke-app/helm/my-gke-app/* helm/my-gke-app/
-rm -rf /home/gandinehru35/my-gke-app/frontend/my-gke-app
-rm -rf /home/gandinehru35/my-gke-app/frontend/my-gke-app/helm/my-gke-app/.git
-rm -rf /home/gandinehru35/my-gke-app/helm/my-gke-app/.git
-cd /home/gandinehru35/my-gke-app
-rm -rf .git  # Remove any existing root .git to start fresh
-git init
-cd /home/gandinehru35/my-gke-app/backend
-cat <<EOF > Dockerfile
-FROM python:3.9-slim
-RUN pip install flask
-COPY app.py .
-CMD ["python", "app.py"]
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi # Request 5GB of persistent disk
+EOT
+
+echo "Creating k8s/04-app-deployment.yaml..."
+cat << 'EOT' > k8s/04-app-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app
+  namespace: prod
+  labels:
+    app: hello-app
+spec:
+  replicas: 2 # Start with 2 replicas
+  selector:
+    matchLabels:
+      app: hello-app
+  template:
+    metadata:
+      labels:
+        app: hello-app # Label for service and network policy
+    spec:
+      containers:
+      - name: hello-app
+        image: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "postgres" # The name of the database service
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASSWORD
+        resources:
+          # Required for HPA to work
+          requests:
+            cpu: "100m" # Request 0.1 vCPU
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+EOT
+
+echo "Creating k8s/05-app-service.yaml..."
+cat << 'EOT' > k8s/05-app-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app-svc
+  namespace: prod
+spec:
+  type: ClusterIP # Internal service only
+  selector:
+    app: hello-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+EOT
+
+echo "Creating k8s/06-managed-cert.yaml..."
+cat << 'EOT' > k8s/06-managed-cert.yaml
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: hello-app-cert
+  namespace: prod
+spec:
+  domains:
+    - www.glamournest.store
+EOT
+
+echo "Creating k8s/07-ingress.yaml..."
+cat << 'EOT' > k8s/07-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-app-ingress
+  namespace: prod
+  annotations:
+    # Use the GKE-managed certificate
+    networking.gke.io/managed-certificates: "hello-app-cert"
+    # Use the GKE Ingress controller
+    kubernetes.io/ingress.class: "gce"
+spec:
+  rules:
+  - host: www.glamournest.store
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hello-app-svc
+            port:
+              number: 80
+EOT
+
+echo "Creating k8s/08-hpa.yaml..."
+cat << 'EOT' > k8s/08-hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello-app-hpa
+  namespace: prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello-app
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50 # Target 50% CPU utilization
+EOT
+
+echo "Creating k8s/09-rbac-role.yaml..."
+cat << 'EOT' > k8s/09-rbac-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: prod-reader
+  namespace: prod
+rules:
+- apiGroups: ["", "apps", "autoscaling", "networking.k8s.io"]
+  resources: ["pods", "deployments", "services", "ingresses", "hpas", "networkpolicies"]
+  verbs: ["get", "list", "watch"]
+EOT
+
+echo "Creating k8s/10-rbac-rolebinding.yaml..."
+cat << 'EOT' > k8s/10-rbac-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-prod-reader
+  namespace: prod
+subjects:
+- kind: User
+  name: gandinehru35@gmail.com
+roleRef:
+  kind: Role
+  name: prod-reader
+  apiGroup: rbac.authorization.k8s.io
+EOT
+
+echo "Creating k8s/11-netpol-db.yaml..."
+cat << 'EOT' > k8s/11-netpol-db.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-db
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres # This policy applies to the database pod
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: hello-app # ONLY allow traffic from the app pods
+    ports:
+    - protocol: TCP
+      port: 5432 # To the postgres port
+EOT
+
+echo "Creating k8s/12-netpol-app.yaml..."
+cat << 'EOT' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # This magic block allows traffic from the GKE Ingress/Health Checkers
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-gce
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOT
+
+echo "Creating k8s/13-prometheus-values.yaml..."
+cat << 'EOT' > k8s/13-prometheus-values.yaml
+# This file overrides the defaults of the kube-prometheus-stack Helm chart
+grafana:
+  persistence:
+    enabled: true
+    type: pvc
+    size: 10Gi
+    # GKE's default StorageClass will be used
+EOT
+
+echo "Creating .github/workflows/gke-deploy.yaml..."
+cat << 'EOT' > .github/workflows/gke-deploy.yaml
+# This file goes in your .github/workflows/ directory in your Git repo
+
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main # Trigger on push to main branch
+
+env:
+  PROJECT_ID: alpine-anvil-473102-c4
+  GKE_CLUSTER: hello-cluster
+  GKE_ZONE: us-central1-a
+  IMAGE_REPO: hello-repo
+  IMAGE_NAME: hello-app
+  K8S_DIR: k8s
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Authenticate to Google Cloud
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        # --- IMPORTANT ---
+        # Create a 'GCP_SA_KEY' secret in your GitHub repo settings
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    # Set up GKE credentials
+    - name: Get GKE credentials
+      uses: google-github-actions/get-gke-credentials@v1
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+
+    # Configure Docker
+    - name: Configure Docker
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+    # Build and push Docker image
+    - name: Build and Push
+      run: |
+        export IMAGE_PATH="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+        
+        # Build and push
+        docker build -t $IMAGE_PATH ./app
+        docker push $IMAGE_PATH
+        
+        # --- IMPORTANT ---
+        # This step updates the k8s/04-app-deployment.yaml file 
+        # with the new image tag before applying
+        sed -i "s|image:.*|image: $IMAGE_PATH|g" ${{ env.K8S_DIR }}/04-app-deployment.yaml
+
+    # Deploy to GKE
+    - name: Deploy
+      run: |
+        # Apply all manifests
+        # The 'apply' command is idempotent
+        kubectl apply -f ${{ env.K8S_DIR }}/
+EOT
+
+echo ""
+echo "All files created successfully with your specific values!"
+echo "Run 'chmod +x create_all_files.sh' to make it executable."
+echo "Run './create_all_files.sh' to create all project files."
+
 EOF
 
-cat <<EOF > app.py
-from flask import Flask
+ls
+cd ~
+ls
+chmod +x create_all_files.sh
+./create_all_files.sh
+ls
+./create_all_files.sh
+ls
+cd k8s
+ls
+kubectl apply -f k8s/00-namespaces.yaml
+cd ~
+kubectl apply -f k8s/00-namespaces.yaml
+kubectl get namespace
+# Configure Docker to authenticate with Artifact Registry
+gcloud auth configure-docker us-central1-docker.pkg.dev
+# Define the image tag
+export IMAGE_TAG="us-central1-docker.pkg.dev/${PROJECT_ID}/hello-repo/hello-app:v1"
+# Build the image
+docker build -t $IMAGE_TAG ./app
+# Push the image
+docker push $IMAGE_TAG
+echo "Applying database secret..."
+kubectl apply -f k8s/01-db-secret.yaml
+echo "Applying database service..."
+kubectl apply -f k8s/02-db-service.yaml
+echo "Applying database statefulset..."
+kubectl apply -f k8s/03-db-statefulset.yaml
+kubectl get pods -n prod -l app=postgres
+# You should see 'postgres-0' in 'Running' state
+kubectl get pvc -n prod -l app=postgres
+# You should see 'data-postgres-0' in 'Bound' state
+echo "Applying application deployment..."
+kubectl apply -f k8s/04-app-deployment.yaml
+kubectl apply -f k8s/05-app-service.yaml
+echo "Applying managed certificate..."
+kubectl apply -f k8s/06-managed-cert.yaml
+echo "Applying ingress..."
+kubectl apply -f k8s/07-ingress.yaml
+kubectl get ingress -n prod -w
+# Wait for the 'ADDRESS' column to show an IP address.
+# Once you have the IP, update your domain's 'A' record to point to it.
+kubectl get ingress -n prod -w
+echo "Applying Metrics Server..."
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+echo "Applying HPA..."
+kubectl apply -f k8s/08-hpa.yaml
+kubectl get hpa -n prod
+# You should see 'hello-app-hpa'. The 'TARGETS' column may show '<unknown>/50%' 
+# for a few minutes until Metrics Server is fully operational.
+kubectl get ingress -n prod -w
+echo "Applying read-only RBAC role..."
+kubectl apply -f k8s/09-rbac-role.yaml
+echo "Applying read-only RBAC role binding..."
+kubectl apply -f k8s/10-rbac-rolebinding.yaml
+echo "Applying database network policy..."
+kubectl apply -f k8s/11-netpol-db.yaml
+echo "Applying application network policy..."
+kubectl apply -f k8s/12-netpol-app.yaml
+helm install prometheus prometheus-community/kube-prometheus-stack     --namespace monitoring     --values k8s/13-prometheus-values.yaml
+# Get the auto-generated Grafana admin password
+kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+# Forward the Grafana port to your local machine
+echo "Access Grafana at http://localhost:8080"
+kubectl port-forward -n monitoring svc/prometheus-grafana 8080:80
+# Get the auto-generated Grafana admin password
+kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+# Forward the Grafana port to your local machine
+echo "Access Grafana at http://localhost:8080"
+kubectl port-forward -n monitoring svc/prometheus-grafana 8080:80
+kubectl get all -n monitoring
+kubectl port-forward -n monitoring svc/prometheus-grafana 8080:80
+# Get the auto-generated Grafana admin password
+kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+# Forward the Grafana port to your local machine
+echo "Access Grafana at http://localhost:8080"
+kubectl port-forward -n monitoring svc/prometheus-grafana 8080:80
+kubectl describe svc prometheus-grafana -n monitoring
+kubectl port-forward -n monitoring svc/prometheus-grafana 8000:80
+kubectl port-forward -n monitoring svc/prometheus-grafana 9000:80
+kubectl get ingress -n prod -w
+kubectl gel all -n prod
+kubectl get all -n prod
+kubectl get ingress -n prod -w
+kubectl get pods -n prod
+kubectl logs -n prod hello-app-7dc49948f5-5q66q
+clear
+kubectl exec -it -n prod hello-app-7dc49948f5-5q66q -- /bin/sh
+gcloud auth login 
+gcloud config set project alpine-anvil-473102-c4
+cd
+ls
+kubectl get pods
+kubectl get pods -n prod
+kubectl exec -it -n prod hello-app-7dc49948f5-5q66q -- /bin/sh
+kubectl exec -it -n prod -- /bin/sh
+kubectl exec -it -n prod postgres-0 -- /bin/sh
+kubectl delete pod postgres-0 -n prod
+kubectl get pods -n prod -o wide
+kubectl exec -n prod -it postgres-0 -- /bin/sh
+clear
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl get all -n prod -o wide
+kubectl get managedcertificate -n prod hello-app-cert -o wide
+kubectl get ingress -n prod -w
+kubectl delete  managedcertificate -n prod hello-app-cert
+kubectl apply -f echo "Applying managed certificate..."
+kubectl apply -f k8s/06-managed-cert.yaml
+kubectl get ingress -n prod -w
+kubectl delete ingress
+kubectl delete ingress hello-app-ingress
+kubectl delete ingress hello-app-ingress -n prod
+kubectl apply -f k8s/07-ingress.yaml
+kubectl get ingress -n prod -w
+clear
+kubectl get ingress -n prod -w
+kubectl get managedcertificate -n prod hello-app-cert -o wide
+kubectl get all -n prod
+kubectl get managedcertificate -n prod hello-app-cert -o wide
+kubectl get ingress -n prod -w
+kubectl describe ingress -n prod -w
+kubectl describe ingress -n prod
+kubectl describe svc prod/hello-app-svc
+kubectl describe svc hello-app-svc -n prod
+kubectl apply -f k8s/05-app-service.yaml
+kubectl describe ingress -n prod
+kubectl apply -f k8s/07-ingress.yaml
+kubectl describe ingress -n prod
+kubectl describe managedcertificate -n prod
+kubectl get ingress -n prod -w
+kubectl describe ingress -n prod
+clear
+kubectl describe ingress -n prod
+kubectl get ingress -n prod -w
+kubectl describe ingress -n prod
+kubectl describe managedcertificate -n prod
+kubectl describe ingress -n prod
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+kubectl get all -n prod
+kubectl describe svc hello-app-svc -n prod
+kubectl describe pod hello-app
+kubectl describe pod hello-app-7dc49948f5-5q66q
+kubectl describe pods hello-app-7dc49948f5-mkjmg
+kubectl describe pods hello-app-7dc49948f5-mkjmg -n prod
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+kubectl describe ingress -n prod
+kubectl describe managedcertificate -n prod
+kubectl --as=gandinehru35@gmail.com get pods -n prod
+kubectl --as=gandinehru35@gmail.com delete pod <app-pod-name-here> -n prod
+kubectl --as=gandinehru35@gmail.com delete pod hello-app-7dc49948f5-5q66q -n prod
+# This will refresh every 2 seconds
+watch 'kubectl get hpa -n prod ; echo ; kubectl get pods -n prod -l app=hello-app'
+kubectl apply -f k8s/12-netpol-app.yaml
+cd k8s
+ls
+kubectl apply -f .
+cd ~
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+kubectl get ingress -n prod hello-app-ingress
+# NAME                CLASS   HOSTS                   ADDRESS         PORTS     AGE
+# hello-app-ingress   gce     www.glamournest.store   34.XXX.XXX.XXX   80, 443   7h
+nslookup www.glamournest.store
+kubectl get pods -n prod
+kubectl describe pod hello-app-7dc49948f5-5q66q
+kubectl describe pod hello-app-7dc49948f5-5q66q -n pord
+kubectl describe pod hello-app-7dc49948f5-5q66q -n prod
+kubectl apply -f k8s/12-netpol-app.yaml
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+kubectl delete pod load-generator -n prod
+clear
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+cd k8s
+kubectl apply -f .
+cd !
+cd ~
+clear
+kubectl get pods -n prod
+kubectl get ingress -n prod -w
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+kubectl get ingress -n prod -w
+kubectl describe ingress hello-app-ingress -n prod
+kubectl get pods -n prod -w
+kubectl describe pod -n prod hello-app-7dc49948f5-5q66q
+kubectl apply -f k8s/12-netpol-app.yaml
+gcloud config set project	alpine-anvil-473102-c4
+gcloud projects list
+gcloud config set project 1039471930533
+kubectl get ingress -n prod -w
+kubectl describe ingress hello-app-ingress -n prod
+cat << 'EOF' > k8s/05-app-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app-svc
+  namespace: prod
+  # Add an annotation GKE needs for NodePort services
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  # --- THIS IS THE FIX ---
+  # Change type from ClusterIP to NodePort
+  type: NodePort
+  selector:
+    app: hello-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+EOF
+
+cat << 'EOF' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # Allows traffic from the GKE Ingress/Health Checkers
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-gce
+    # Allows traffic from Prometheus
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- THIS IS THE FIX ---
+    # Allows traffic from other pods in the 'prod' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOF
+
+kubectl apply -f k8s/05-app-service.yaml
+kubectl apply -f k8s/12-netpol-app.yaml
+kubectl describe ingress hello-app-ingress -n prod
+kubectl get ingress -n prod -w
+kubectl describe ingress hello-app-ingress -n prod
+clear
+kubectl describe ingress hello-app-ingress -n prod
+kubectl get pod -n prod
+kubectl get all -n prod
+kubectl describe svc hello-app-svc
+kubectl describe svc hello-app-svc -n prod
+kubectl describe ingress hello-app-ingress -n prod
+nslookup www.glamournest.store
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl delete managedcertificate hello-app-cert -n prod
+kubectl applu -f 06-managed-cert.yaml
+kubectl apply -f 06-managed-cert.yaml
+kubectl apply -f k8s/06-managed-cert.yaml
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl describe svc hello-app-svc -n prod
+kubectl describe ingress hello-app-ingress -n prod
+kubectl describe svc hello-app-svc -n prod
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl describe ingress hello-app-ingress -n prod
+clear
+kubectl describe ingress hello-app-ingress -n prod
+clear
+kubectl describe ingress hello-app-ingress -n prod
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl describe ingress hello-app-ingress -n prod
+cd k8s
+ls
+kubectl delete ingress hello-app-ingress -n prod
+kubectl describe ingress hello-app-ingress -n prod
+kubectl apply -f 07-ingress.yaml
+kubectl describe ingress hello-app-ingress -n prod
+kubectl apply -f 07-ingress.yaml
+kubectl get managedcertificate -n prod hello-app-cert
+kubectl describe ingress hello-app-ingress -n prod
+kubectl describe get hello-app-ingress -n prod
+kubectl get ingress hello-app-ingress -n prod
+kubectl describe get hello-app-ingress -n prod
+kubectl describe ingress hello-app-ingress -n prod
+nslookup www.glamournest.store
+kubectl get managedcertificate -n prod
+kubectl describe ingress hello-app-ingress -n prod
+cat << 'EOF' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # --- FIX 1 ---
+    # This block allows traffic from the GKE Ingress/Health Checkers
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-gce
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- FIX 2 ---
+    # This allows traffic from ANY pod in our own 'prod' namespace.
+    # This will allow our 'load-generator' pod to work.
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOF
+
+cd ~
+cat << 'EOF' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # --- FIX 1 ---
+    # This block allows traffic from the GKE Ingress/Health Checkers
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-gce
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- FIX 2 ---
+    # This allows traffic from ANY pod in our own 'prod' namespace.
+    # This will allow our 'load-generator' pod to work.
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOF
+
+kubectl apply -f k8s/12-netpol-app.yaml
+kubectl describe ingress hello-app-ingress -n prod
+kubectl logs -n prod
+kubectl logs -h
+kubectl describe ingress hello-app-ingress -n prod
+kubectl logs k8s1-30ec42b8-prod-hello-app-svc-80-28ae699b
+kubectl logs k8s1-30ec42b8-prod-hello-app-svc-80-28ae699b -n prod
+kubectl logs svc k8s1-30ec42b8-prod-hello-app-svc-80-28ae699b -n prod
+kubectl describe svc k8s1-30ec42b8-prod-hello-app-svc-80-28ae699b -n prod
+cat << 'EOF' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # --- FIX 1 ---
+    # This block allows traffic from the GKE Ingress/Health Checkers
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-gce
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- FIX 2 ---
+    # This allows traffic from ANY pod in our own 'prod' namespace.
+    # This will allow our 'load-generator' pod to work.
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOF
+
+kubectl apply -f k8s/12-netpol-app.yaml
+kubectl describe ingress hello-app-ingress -n prod
+cat << 'EOF' > k8s/12-netpol-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-app
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: hello-app # This policy applies to the app pods
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    # --- FIX 1 (The REAL fix) ---
+    # This block allows traffic from the GKE Ingress/Health Checkers
+    # by their specific IP ranges.
+    - ipBlock:
+        cidr: 130.211.0.0/22
+    - ipBlock:
+        cidr: 35.191.0.0/16
+    # This allows traffic from the Prometheus in the 'monitoring' namespace
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    # --- FIX 2 (For your load test) ---
+    # This allows traffic from ANY pod in our own 'prod' namespace.
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: prod
+    ports:
+    - protocol: TCP
+      port: 8080 # To the app's container port
+EOF
+
+kubectl apply -f k8s/12-netpol-app.yaml
+kubectl describe ingress hello-app-ingress -n prod
+clear
+kubectl get all -prod 
+kubectl get all -n prod 
+kubectl describe svc hello-app-svc -n prod
+kubectl describe ingress hello-app-ingress -n prod
+clear
+kubectl describe ingress hello-app-ingress -n prod
+kubectl get managedcertificate -n prod
+kubectl describe ingress hello-app-ingress -n prod
+curl -k https://34.8.72.162
+kubectl describe ingress hello-app-ingress -n prod
+curl -k https://34.8.72.162
+cat << 'EOF' > k8s/14-app-rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-metrics-reader
+  namespace: prod
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-metrics-reader
+  namespace: prod
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-app-metrics-reader
+  namespace: prod
+subjects:
+- kind: ServiceAccount
+  name: app-metrics-reader
+  namespace: prod
+roleRef:
+  kind: Role
+  name: pod-metrics-reader
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+kubectl apply -f k8s/14-app-rbac.yaml
+# This command appends the new line to the file
+echo "kubernetes" >> app/requirements.txt
+cat << 'EOF' > app/app.py
+import os
+import psycopg2
+from flask import Flask, jsonify
+from kubernetes import client, config
+
 app = Flask(__name__)
+
+# --- New Kubernetes API Setup ---
+try:
+    # Load in-cluster configuration
+    config.load_incluster_config()
+    
+    # Create API clients
+    v1 = client.CoreV1Api()
+    metrics_api = client.CustomObjectsApi()
+    
+    app.logger.info("Successfully loaded in-cluster K8s config.")
+except Exception as e:
+    app.logger.error(f"Could not load in-cluster K8s config: {e}")
+    v1 = None
+    metrics_api = None
+# --- End of New Setup ---
+
+
+def get_db_connection():
+    """Establishes a connection to the PostgreSQL database."""
+    try:
+        conn = psycopg2.connect(
+            host=os.environ.get('DB_HOST', 'postgres'),
+            database=os.environ.get('DB_NAME', 'postgres'),
+            user=os.environ.get('DB_USER'),
+            password=os.environ.get('DB_PASSWORD')
+        )
+        return conn
+    except Exception as e:
+        app.logger.error(f"Error connecting to database: {e}")
+        return None
+
 @app.route('/')
 def hello():
-    return "Hello from Backend!"
+    """Returns a simple hello message."""
+    return jsonify(message="Hello from Kubernetes!")
+
+@app.route('/health')
+def health_check():
+    """Performs a health check on the app and database connection."""
+    conn = None
+    try:
+        conn = get_db_connection()
+        if conn:
+            conn.close()
+            db_status = "connected"
+            status_code = 200
+        else:
+            db_status = "disconnected"
+            status_code = 500
+
+        return jsonify(status="ok", database=db_status), status_code
+
+    except Exception as e:
+        return jsonify(status="error", message=str(e)), 500
+    finally:
+        if conn:
+            conn.close()
+
+# --- New Metrics Endpoint ---
+@app.route('/metrics')
+def get_pod_metrics():
+    """Fetches and displays pod metrics for the 'prod' namespace."""
+    if not v1 or not metrics_api:
+        return jsonify(error="K8s API client not initialized"), 500
+
+    try:
+        # 1. Get Pod Metrics (CPU/Memory)
+        metrics = metrics_api.list_namespaced_custom_object(
+            group="metrics.k8s.io",
+            version="v1beta1",
+            namespace="prod",
+            plural="pods"
+        )
+        
+        pod_metrics = {}
+        for item in metrics['items']:
+            pod_name = item['metadata']['name']
+            usage = item['containers'][0]['usage']
+            pod_metrics[pod_name] = {
+                'cpu': usage.get('cpu', '0'),
+                'memory': usage.get('memory', '0')
+            }
+
+        # 2. Get Pod Status (Running, Pending, etc.)
+        pods = v1.list_namespaced_pod(namespace="prod")
+        
+        pod_data = []
+        for pod in pods.items:
+            pod_name = pod.metadata.name
+            pod_data.append({
+                'name': pod_name,
+                'status': pod.status.phase,
+                'node': pod.spec.node_name,
+                'metrics': pod_metrics.get(pod_name, 'Not Available')
+            })
+
+        return jsonify(
+            namespace="prod",
+            pod_count=len(pod_data),
+            pods=pod_data
+        )
+
+    except Exception as e:
+        app.logger.error(f"Error fetching K8s metrics: {e}")
+        return jsonify(error=str(e)), 500
+# --- End of New Endpoint ---
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host='0.0.0.0', port=8080)
 EOF
 
-cd /home/gandinehru35/my-gke-app/frontend
-cat <<EOF > Dockerfile
-FROM nginx:latest
-COPY index.html /usr/share/nginx/html/index.html
+cat << 'EOF' > k8s/04-app-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app
+  namespace: prod
+  labels:
+    app: hello-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-app
+  template:
+    metadata:
+      labels:
+        app: hello-app
+    spec:
+      # --- THIS IS THE CHANGE ---
+      # Tell the pod to use the ServiceAccount we created
+      serviceAccountName: app-metrics-reader
+      # --- END OF CHANGE ---
+      containers:
+      - name: hello-app
+        # We will build and push this v2 image next
+        image: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v2
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASSWORD
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
 EOF
 
-cat <<EOF > index.html
+docker build -t us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v2 ./app
+docker push us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v2
+kubectl apply -f k8s/04-app-deployment.yaml
+kubectl getl all -n prod
+kubectl get all -n prod
+kubectl get all -n prod -w
+kubectl get all -n prod -o wide
+kubectl describe ingress hello-app-ingress -n prod
+clear
+mkdir -p app/templates
+cat << 'EOF' > app/templates/dashboard.html
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GKE Cluster Dashboard (prod)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1a73e8;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        #dashboard {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .status-running { color: #34a853; font-weight: bold; }
+        .status-pending { color: #fbbc05; font-weight: bold; }
+        .status-failed { color: #ea4335; font-weight: bold; }
+        .bar-container {
+            width: 100px;
+            height: 16px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar {
+            height: 100%;
+            background-color: #4285f4;
+            border-radius: 4px 0 0 4px;
+            transition: width 0.3s ease-in-out;
+        }
+        .bar-memory { background-color: #34a853; }
+        .metrics-value {
+            font-size: 0.9em;
+            color: #555;
+            min-width: 60px;
+            display: inline-block;
+        }
+        #summary {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #summary span {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+    </style>
+</head>
 <body>
-  <h1>Welcome to the Frontend!</h1>
+
+    <h1>GKE Cluster Dashboard</h1>
+    <div id="summary">
+        Namespace: <strong>prod</strong> | Pod Count: <span id="pod-count">...</span>
+    </div>
+
+    <div id="dashboard">
+        <table>
+            <thead>
+                <tr>
+                    <th>Pod Name</th>
+                    <th>Status</th>
+                    <th>Node</th>
+                    <th>CPU Usage</th>
+                    <th>Memory Usage</th>
+                </tr>
+            </thead>
+            <tbody id="pod-table-body">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Helper function to parse CPU values like "1000m" (millicores) or "10n" (nanocores)
+        function parseCpu(cpuStr) {
+            if (!cpuStr) return 0;
+            if (cpuStr.endsWith('m')) {
+                return parseFloat(cpuStr) / 1000; // Convert millicores to cores
+            }
+            if (cpuStr.endsWith('n')) {
+                return parseFloat(cpuStr) / 1000000000; // Convert nanocores to cores
+            }
+            return parseFloat(cpuStr);
+        }
+
+        // Helper function to parse Memory values like "100Mi" or "10Gi"
+        function parseMemory(memStr) {
+            if (!memStr) return 0;
+            if (memStr.endsWith('Ki')) {
+                return parseFloat(memStr) * 1024;
+            }
+            if (memStr.endsWith('Mi')) {
+                return parseFloat(memStr) * 1024 * 1024;
+            }
+            if (memStr.endsWith('Gi')) {
+                return parseFloat(memStr) * 1024 * 1024 * 1024;
+            }
+            return parseFloat(memStr);
+        }
+
+        // Main function to fetch and render data
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/metrics');
+                const data = await response.json();
+                
+                // Update summary
+                document.getElementById('pod-count').textContent = data.pod_count || 0;
+
+                // Update table
+                const tableBody = document.getElementById('pod-table-body');
+                tableBody.innerHTML = ''; // Clear old data
+
+                data.pods.forEach(pod => {
+                    const row = document.createElement('tr');
+                    
+                    let metrics = pod.metrics;
+                    let cpuUsage = 0;
+                    let memUsage = 0;
+                    let cpuText = "0m";
+                    let memText = "0Mi";
+
+                    if (metrics && metrics.cpu) {
+                        cpuUsage = parseCpu(metrics.cpu);
+                        cpuText = metrics.cpu;
+                    }
+                    if (metrics && metrics.memory) {
+                        memUsage = parseMemory(metrics.memory);
+                        memText = metrics.memory;
+                    }
+
+                    // --- Create Simple Bar Graphs ---
+                    // Assuming 1 core (1000m) is 100% for CPU
+                    const cpuPercent = (cpuUsage / 1) * 100; 
+                    // Assuming 256Mi is 100% for Memory (based on our limit)
+                    const memPercent = (memUsage / (256 * 1024 * 1024)) * 100;
+
+                    row.innerHTML = `
+                        <td>${pod.name}</td>
+                        <td class="status-${pod.status.toLowerCase()}">${pod.status}</td>
+                        <td>${pod.node || 'N/A'}</td>
+                        <td>
+                            <span class="metrics-value">${cpuText}</span>
+                            <div class="bar-container">
+                                <div class="bar bar-cpu" style="width: ${cpuPercent.toFixed(2)}%;"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="metrics-value">${memText}</span>
+                            <div class="bar-container">
+                                <div class="bar bar-memory" style="width: ${memPercent.toFixed(2)}%;"></div>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                const tableBody = document.getElementById('pod-table-body');
+                tableBody.innerHTML = '<tr><td colspan="5" style="color: red; text-align: center;">Error loading data. Is the /metrics endpoint running?</td></tr>';
+            }
+        }
+
+        // Run the function now and then every 2 seconds
+        updateDashboard();
+        setInterval(updateDashboard, 2000); 
+    </script>
 </body>
 </html>
 EOF
 
-cd /home/gandinehru35/my-gke-app/helm/my-gke-app
-cat <<EOF > Chart.yaml
-apiVersion: v2
-name: my-gke-app
-description: Microservices app for GKE
-type: application
-version: 0.1.0
-appVersion: "1.0"
+cat << 'EOF' > app/app.py
+import os
+import psycopg2
+from flask import Flask, jsonify, render_template, redirect, url_for
+from kubernetes import client, config
+
+app = Flask(__name__)
+
+# --- Kubernetes API Setup ---
+try:
+    config.load_incluster_config()
+    v1 = client.CoreV1Api()
+    metrics_api = client.CustomObjectsApi()
+    app.logger.info("Successfully loaded in-cluster K8s config.")
+except Exception as e:
+    app.logger.error(f"Could not load in-cluster K8s config: {e}")
+    v1 = None
+    metrics_api = None
+
+def get_db_connection():
+    """Establishes a connection to the PostgreSQL database."""
+    try:
+        conn = psycopg2.connect(
+            host=os.environ.get('DB_HOST', 'postgres'),
+            database=os.environ.get('DB_NAME', 'postgres'),
+            user=os.environ.get('DB_USER'),
+            password=os.environ.get('DB_PASSWORD')
+        )
+        return conn
+    except Exception as e:
+        app.logger.error(f"Error connecting to database: {e}")
+        return None
+
+# --- NEW: Redirect root to our new dashboard ---
+@app.route('/')
+def hello():
+    """Redirects to the main dashboard."""
+    return redirect(url_for('dashboard'))
+
+# --- NEW: Dashboard Route ---
+@app.route('/dashboard')
+def dashboard():
+    """Serves the human-readable dashboard page."""
+    return render_template('dashboard.html')
+
+@app.route('/health')
+def health_check():
+    """Performs a health check on the app and database connection."""
+    conn = None
+    try:
+        conn = get_db_connection()
+        if conn:
+            conn.close()
+            db_status = "connected"
+            status_code = 200
+        else:
+            db_status = "disconnected"
+            status_code = 500
+        return jsonify(status="ok", database=db_status), status_code
+    except Exception as e:
+        return jsonify(status="error", message=str(e)), 500
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/metrics')
+def get_pod_metrics():
+    """Fetches and displays pod metrics for the 'prod' namespace."""
+    if not v1 or not metrics_api:
+        return jsonify(error="K8s API client not initialized"), 500
+
+    try:
+        metrics = metrics_api.list_namespaced_custom_object(
+            group="metrics.k8s.io",
+            version="v1beta1",
+            namespace="prod",
+            plural="pods"
+        )
+        
+        pod_metrics = {}
+        for item in metrics['items']:
+            pod_name = item['metadata']['name']
+            if item['containers']:
+                usage = item['containers'][0]['usage']
+                pod_metrics[pod_name] = {
+                    'cpu': usage.get('cpu', '0n'),
+                    'memory': usage.get('memory', '0Ki')
+                }
+
+        pods = v1.list_namespaced_pod(namespace="prod")
+        
+        pod_data = []
+        for pod in pods.items:
+            pod_name = pod.metadata.name
+            pod_data.append({
+                'name': pod_name,
+                'status': pod.status.phase,
+                'node': pod.spec.node_name,
+                'metrics': pod_metrics.get(pod_name, {'cpu': '0n', 'memory': '0Ki'})
+            })
+
+        return jsonify(
+            namespace="prod",
+            pod_count=len(pod_data),
+            pods=pod_data
+        )
+    except Exception as e:
+        app.logger.error(f"Error fetching K8s metrics: {e}")
+        return jsonify(error=str(e)), 500
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8080)
 EOF
 
-cat <<EOF > values.yaml
-replicaCount: 2
-backend:
-  image:
-    repository: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/backend-api
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    port: 8080
-frontend:
-  image:
-    repository: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/frontend-ui
-    tag: latest
-    pullPolicy: IfNotPresent
-  service:
-    type: LoadBalancer
-    port: 80
-EOF
-
-cat <<EOF > templates/app.yaml
+cat << 'EOF' > k8s/04-app-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "my-gke-app.fullname" . }}-backend
+  name: hello-app
+  namespace: prod
   labels:
-    app: microservice
-    tier: backend
+    app: hello-app
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 2
   selector:
     matchLabels:
-      tier: backend
+      app: hello-app
   template:
     metadata:
       labels:
-        tier: backend
+        app: hello-app
     spec:
+      serviceAccountName: app-metrics-reader
       containers:
-      - name: backend-container
-        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
-        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+      - name: hello-app
+        # --- Pointing to v3 ---
+        image: us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v3
         ports:
-        - containerPort: {{ .Values.backend.service.port }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-  labels:
-    tier: backend
-spec:
-  selector:
-    tier: backend
-  ports:
-  - port: 80
-    targetPort: {{ .Values.backend.service.port }}
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "my-gke-app.fullname" . }}-frontend
-  labels:
-    app: microservice
-    tier: frontend
-spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      tier: frontend
-  template:
-    metadata:
-      labels:
-        tier: frontend
-    spec:
-      containers:
-      - name: frontend-container
-        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.frontend.service.port }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-  labels:
-    tier: frontend
-spec:
-  selector:
-    tier: frontend
-  ports:
-  - port: 80
-    targetPort: {{ .Values.frontend.service.port }}
-  type: {{ .Values.frontend.service.type }}
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASSWORD
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
 EOF
 
-mkdir -p /home/gandinehru35/my-gke-app/.github/workflows
-cd /home/gandinehru35/my-gke-app
-cat <<EOF > .github/workflows/deploy.yaml
-name: Deploy to GKE
-on:
-  push:
-    branches: [ main ]
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    steps:
-    - uses: actions/checkout@v3
-    - name: Authenticate to GCP
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: 'projects/737956044912/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
-        service_account: 'github-deployer@alpine-anvil-473102-c4.iam.gserviceaccount.com'
-    - name: Set up gcloud
-      uses: google-github-actions/setup-gcloud@v1
-    - name: Configure Docker
-      run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
-    - name: Set up Helm
-      uses: azure/setup-helm@v4
-      with:
-        version: 'v3.15.0'
-    - name: Build and Push Backend
-      run: |
-        cd backend
-        docker build -t us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/backend-api:\${{ github.sha }} .
-        docker push us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/backend-api:\${{ github.sha }}
-    - name: Build and Push Frontend
-      run: |
-        cd frontend
-        docker build -t us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/frontend-ui:\${{ github.sha }} .
-        docker push us-central1-docker.pkg.dev/alpine-anvil-473102-c4/my-repo/frontend-ui:\${{ github.sha }}
-    - name: Deploy to GKE
-      run: |
-        gcloud container clusters get-credentials gke-interview-cluster --zone=us-central1-c --project=alpine-anvil-473102-c4
-        helm upgrade --install my-app helm/my-gke-app           --set backend.image.tag=\${{ github.sha }}           --set frontend.image.tag=\${{ github.sha }}
-EOF
-
-cd /home/gandinehru35/my-gke-app
-git add .
-git status
-git commit -m "Initial project setup with backend, frontend, and Helm chart"
-git remote rm origin
-git remote add origin https://github.com/gandinehru35-spec/gke-interview-project.git
-git branch
-git branch -m master main
-git push -u origin main
-ssh-keygen -t ed25519 -C "gandinehru35@gmail.com"
-cat /home/gandinehru35/.ssh/id_ed25519.pub
-git push -u origin main
-git status
-git push -u origin main
-git remote set-url origin git@github.com/gandinehru35-spec/gke-interview-project.git
-git push -u origin main
-gcloud auth login
-git remote add origin https://github.com/gandinehru35-spec/gke-interview-project.git
-git push -u origin main
-git remote set-url origin https://github.com/gandinehru35-spec/gke-interview-project.git
-git push -u origin main
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git branch -M main
-git push -u origin main
-git remote set-url origin git@github.com/gandinehru35-spec/gke-interview-project.git
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git branch -M main
-git push -u origin main
-echo "# https-github.com-ggke-interview-project" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git push -u origin main
-git remote -v
-git push -u origin main
-echo "# https-github.com-ggke-interview-project" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/gandinehru35-spec/https-github.com-ggke-interview-project.git
-git push -u origin main
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git branch -M main
-git push -u origin main
-git remote set-url origin git@github.com/gandinehru35-spec/https-github.com-ggke-interview-project.git
-git push -u origin main
-echo "# https-github.com-ggke-interview-project" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git push -u origin main
-ssh -T git@github.com
-git push -u origin main
-git remote add origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git branch -M main
-git push -u origin main
-git remote set-url origin git@github.com:gandinehru35-spec/https-github.com-ggke-interview-project.git
-git push -u origin main
-gcloud iam workload-identity-pools create github-actions-pool     --project=alpine-anvil-473102-c4     --location=global     --display-name="GitHub Actions Pool"
-gcloud iam workload-identity-pools providers create-oidc github-provider     --project=alpine-anvil-473102-c4     --location=global     --workload-identity-pool=github-actions-pool     --display-name="GitHub Provider"     --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=aud"     --issuer-uri="https://token.actions.githubusercontent.com"
-gcloud iam service-accounts add-iam-policy-binding github-deployer@alpine-anvil-473102-c4.iam.gserviceaccount.com     --project=alpine-anvil-473102-c4     --role="roles/iam.workloadIdentityUser"     --member="principalSet://iam.googleapis.com/projects/737956044912/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/gandinehru35-spec/gke-interview-project"
-gcloud projects add-iam-policy-binding alpine-anvil-473102-c4     --member="serviceAccount:github-deployer@alpine-anvil-473102-c4.iam.gserviceaccount.com"     --role="roles/container.developer"
-gcloud projects add-iam-policy-binding alpine-anvil-473102-c4     --member="serviceAccount:github-deployer@alpine-anvil-473102-c4.iam.gserviceaccount.com"     --role="roles/artifactregistry.writer"
-gcloud projects describe alpine-anvil-473102-c4 --format="value(projectNumber)"
-gcloud iam service-accounts create github-deployer     --display-name="GitHub Actions Deployer SA"     --description="SA for GitHub Actions CI/CD to GKE"     --project=alpine-anvil-473102-c4
-gcloud iam service-accounts describe github-deployer@alpine-anvil-473102-c4.iam.gserviceaccount.com --project=alpine-anvil-473102-c4
-gcloud iam workload-identity-pools providers delete github-provider     --workload-identity-pool=github-actions-pool     --location=global     --project=alpine-anvil-473102-c4
-gcloud iam workload-identity-pools providers create-oidc github-provider     --project=alpine-anvil-473102-c4     --location=global     --workload-identity-pool=github-actions-pool     --display-name="GitHub Provider"     --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=aud,attribute.repository=assertion.repository"     --issuer-uri="https://token.actions.githubusercontent.com"
-kubectl get pod
-kubectl get all
-kubectl delete all --all -n default
-kubectl get all
-gcloud auth login
-gcloud config set project alpine-anvil-473102-c4
-gcloud config set compute/region northamerica-northeast1
-gcloud config set compute/zone northamerica-northeast1-a
-gcloud services enable   container.googleapis.com   sqladmin.googleapis.com   redis.googleapis.com   artifactregistry.googleapis.com   iam.googleapis.com   compute.googleapis.com   monitoring.googleapis.com   secretmanager.googleapis.com
+docker build -t us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v3 ./app
+docker push us-central1-docker.pkg.dev/alpine-anvil-473102-c4/hello-repo/hello-app:v3
+kubectl apply -f k8s/04-app-deployment.yaml
+kubectl get all -n prod
+kubectl apply -f k8s/08-hap.yaml
+kubectl apply -f k8s/08-hpa.yaml
+kubectl run -n prod -it --rm load-generator --image=busybox -- /bin/sh
+ls
 git config --global user.name "gandinehru35-spec"
 git config --global user.email "gandinehru35@gmail.com"
-gcloud compute networks create gke-vpc --subnet-mode=custom
-gcloud compute networks subnets create gke-subnet   --network=gke-vpc   --region=northamerica-northeast1   --range=10.10.0.0/24
-# Reserve a range for GKE Pods (alias IP)
-gcloud compute networks subnets update gke-subnet   --region=northamerica-northeast1   --add-secondary-ranges=pods=10.20.0.0/20,services=10.21.0.0/24
-DB_PASS='ChangeThisStrongPassw0rd!'
-gcloud sql instances create bank-postgres   --database-version=POSTGRES_14   --cpu=1 --memory=3840MB   --region=northamerica-northeast1   --network=projects/alpine-anvil-473102-c4/global/networks/gke-vpc   --no-assign-ip   --root-password="$DB_PASS"
-gcloud services enable servicenetworking.googleapis.com   --project=alpine-anvil-473102-c4
-gcloud compute addresses create google-managed-services-bank   --global   --prefix-length=24   --description="Private Services Access IP range for Cloud SQL"   --network=gke-vpc   --project=alpine-anvil-473102-c4
-gcloud compute addresses describe google-managed-services-bank --global --project=alpine-anvil-473102-c4
-gcloud services vpc-peerings connect   --service=servicenetworking.googleapis.com   --network=gke-vpc   --ranges=google-managed-services-bank   --project=alpine-anvil-473102-c4
-gcloud services vpc-peerings list --network=gke-vpc --project=alpine-anvil-473102-c4
-DB_PASS='ChangeThisStrongPassw0rd!'   # or your actual password
-gcloud sql instances create bank-postgres   --database-version=POSTGRES_14   --cpu=1 --memory=3840MB   --region=northamerica-northeast1   --network=projects/alpine-anvil-473102-c4/global/networks/gke-vpc   --no-assign-ip   --root-password="$DB_PASS"   --project=alpine-anvil-473102-c4
-gcloud sql instances describe bank-postgres --project=alpine-anvil-473102-c4
-gcloud sql databases create bankdb --instance=bank-postgres
-gcloud sql users create bankuser --instance=bank-postgres --password="$DB_PASS"
-gcloud redis instances create bank-redis   --size=1 --region=northamerica-northeast1 --zone=northamerica-northeast1-a   --tier=BASIC   --network=projects/alpine-anvil-473102-c4/global/networks/gke-vpc
-gcloud container clusters create bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog   --enable-private-nodes=false   --enable-autoupgrade=false   --enable-autorepair=false
-gcloud container clusters create bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog   --enable-private-nodes=false   --enable-autoupgrade=false   --enable-autorepair=false
-gcloud container clusters create bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog   --enable-private-nodes=false   --enable-autoupgrade=false   --enable-autorepair=false
-gcloud container clusters create bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog 
-gcloud container clusters get-credentials bank-gke-cluster --region=northamerica-northeast1
-kubectl get nodes
-gcloud container clusters update bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog 
-gcloud container clusters update bank-gke-cluster   --region=northamerica-northeast1 
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 -f
-gcloud container clusters delete 
-gcloud container clusters delete --help
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-gcloud container operations list --location=CONTROL_PLANE_LOCATION
-gcloud container operations list
-gcloud container operations cancel operation-1760841469750-003a9686-e6db-4d30-8c1a-a646024c9dfc
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-gcloud container operations cancel operation-1760841469750-003a9686-e6db-4d30-8c1a-a646024c9dfc
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --ignore-errors     --quiet
-gcloud container operations cancel operation-1760841469750-003a9686-e6db-4d30-8c1a-a646024c9dfc
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-gcloud container operations --help
-gcloud container operations wait operation-1760841469750-003a9686-e6db-4d30-8c1a-a646024c9dfc
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-gcloud container operations wait operation-1760841469750-003a9686-e6db-4d30-8c1a-a646024c9dfc
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-gcloud container operations wait operation-1760844471102-d42f5fa2-995a-49bd-9bba-1d6fcf7c07d3
-gcloud container clusters create bank-gke-cluster   --region=northamerica-northeast1   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog 
-gcloud container clusters delete bank-gke-cluster   --region=northamerica-northeast1 --async
-goperation-1760844471102-d42f5fa2-995a-49b
-gcloud container clusters create bank-gke-cluster   --zone=northamerica-northeast1-b   --num-nodes=1   --machine-type=e2-medium   --network=gke-vpc   --subnetwork=gke-subnet   --enable-ip-alias   --workload-pool=alpine-anvil-473102-c4.svc.id.goog
-gcloud container clusters get-credentials bank-gke-cluster --zone=northamerica-northeast1-b
-kubectl get nodes
-kubectl get pods
-kubectl get all
-gcloud iam service-accounts create bank-app-sa --display-name="Bank App SA"
-gcloud projects add-iam-policy-binding alpine-anvil-473102-c4   --member="serviceAccount:bank-app-sa@alpine-anvil-473102-c4.iam.gserviceaccount.com"   --role="roles/cloudsql.client"
-gcloud projects add-iam-policy-binding alpine-anvil-473102-c4   --member="serviceAccount:bank-app-sa@alpine-anvil-473102-c4.iam.gserviceaccount.com"   --role="roles/secretmanager.secretAccessor"
-kubectl create serviceaccount ksa-bank-app
-gcloud iam service-accounts add-iam-policy-binding   --role roles/iam.workloadIdentityUser   --member "serviceAccount:alpine-anvil-473102-c4.svc.id.goog[default/ksa-bank-app]"   bank-app-sa@alpine-anvil-473102-c4.iam.gserviceaccount.com
-gcloud sql connect bank-postgres --user=bankuser --quiet --database=bankdb
-# then paste SQL
-gcloud sql instances describe bank-postgres   --project=alpine-anvil-473102-c4   --format="value(connectionName)"
-gcloud compute instances create sql-proxy-vm   --zone=northamerica-northeast1-b   --machine-type=e2-micro   --subnet=gke-subnet   --image-family=debian-12   --image-project=debian-cloud   --project=alpine-anvil-473102-c4
-VM_SA_EMAIL=$(gcloud compute instances describe sql-proxy-vm \
-  --zone=northamerica-northeast1-b \
-  --project=alpine-anvil-473102-c4 \
-  --format="value(serviceAccounts.email)")
-echo $VM_SA_EMAIL
-gcloud projects add-iam-policy-binding alpine-anvil-473102-c4   --member="serviceAccount:${VM_SA_EMAIL}"   --role="roles/cloudsql.client"
-gcloud compute ssh sql-proxy-vm --zone=northamerica-northeast1-b --project=alpine-anvil-473102-c4
-# update and install psql client
-sudo apt-get update && sudo apt-get install -y wget postgresql-client
-gcloud compute ssh sql-proxy-vm --zone=northamerica-northeast1-b --project=alpine-anvil-473102-c4
-gcloud auth login
-gcloud compute ssh sql-proxy-vm --zone=northamerica-northeast1-b --project=alpine-anvil-473102-c4
-curl -s https://ifconfig.co
-$MY_IP=curl -s https://ifconfig.co
-$MY_IP={curl -s https://ifconfig.co
-$MY_IP=34.23.65.254
-export MY_IP=34.23.65.254
-gcloud sql instances patch bank-postgres   --authorized-networks=${MY_IP}/32   --project=alpine-anvil-473102-c4
-gcloud sql connect bank-postgres --user=bankuser --quiet --database=bankdb
-# then paste SQL
-gcloud sql connect bank-postgres --user=bankuser --quiet --database=bankdb
-# then paste SQL
-gcloud sql connect bank-postgres --user=bankuser --quiet --database=bankdb
-gcloud artifacts repositories create bank-repo --repository-format=docker --location=northamerica-northeast1
-IMAGE="northamerica-northeast1-docker.pkg.dev/alpine-anvil-473102-c4/bank-repo/bank-app:v1"
-docker build -t $IMAGE .
-gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
-docker push $IMAGE
-gcloud sql instances describe bank-postgres --format='value(ipAddresses.ipAddress)'
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/ingress.yaml
-kubectl get pods
-kubectl get svc
-kubectl get ingress
-cd bank-app
-ls
-cd banking-app
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/ingress.yaml
-kubectl get pods
-kubectl get svc
-kubectl get ingress
-kubectl apply -f k8s/manage-cert.yaml
-kubectl get ingress
-kubectl get svc
-kubectl get pods
-kubectl apply -f k8s/deployment.yaml
-gcloud container clusters delete bank-gke-cluster --region=northamerica-northeast1 --quiet
-gcloud sql instances delete bank-postgres --quiet
-gcloud redis instances delete bank-redis --region=northamerica-northeast1 --quiet
-gcloud artifacts repositories delete bank-repo --location=northamerica-northeast1 --quiet
-gcloud compute networks delete gke-vpc --quiet
-kubectl get pods
-kubectl get all
-gcloud container clisters list
-helm create hello-chart
-helm package hello-chart/
-gcloud container clusters create my-gke-cluster --zone=us-central1-a
-ls
-helm install my-app-release hello-chart-0.1.0.tgz
-helm install my-app-release ./hello-chart/
-helm install my-app-release ./hello-chart/ --set image.tag=latest
-kubectl get pods,svc
-helm upgrade my-app-release ./hello-chart/
-helm -help
-helm --help
-helm uninstall my-app-release
-kubectl get all
-gcloud container cluster delete my-gke-cluster
-gcloud container clusters delete my-gke-cluster
-gcloud container clusters delete my-gke-cluster --zone=us-central1-a
-gcloud services enable container.googleapis.com artifactregistry.googleapis.com
-gcloud auth login
-gcloud config set project alpine-anvil-473102-c4
-gcloud services enable container.googleapis.com artifactregistry.googleapis.com
-gcloud container clusters create hello-cluster   --zone=us-central1-a   --num-nodes=1   --project=$PROJECT_ID
-gcloud container clusters create hello-cluster   --zone=us-central1-a   --num-nodes=1 
-gcloud container clusters get-credentials hello-cluster --zone us-central1-a 
-export $PROJECT_ID=alpine-anvil-473102-c4
-export $PROJECT_ID alpine-anvil-473102-c4
-export PROJECT_ID=alpine-anvil-473102-c4
-gcloud artifacts repositories create hello-repo   --repository-format=docker   --location=us-central1   --description="Hello World demo"
-cd /day1of7
-ls
-cd day1of7
-gcloud auth configure-docker us-central1-docker.pkg.dev
-docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v1 .
-docker push us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v1
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
-kubectl get pods
-kubectl get svc hello-service
-kubectl apply -f deployment.yaml
-kubectl get pods
-kubectl get svc hello-service
-kubectl scale deployment hello-deployment --replicas=5
-kubectl logs -l app=hello
-kubectl top pods
-git config --global user.name "gandinehru35-spec"
-git config --global user.email "gandinehru35@gmail.com"
-mkdir k8s-hello-world-gke
-cd k8s-hello-world-gke
-mkdir app k8s
-# Add app.py, Dockerfile to app/; deployment.yaml, service.yaml to k8s/
-nano README.md   # Write your documentation here
-cat README.md
-git init
-ls
-cd day1of7
-ls
-git init
-git add .
-git commit -m "Initial commit: Day 1 Hello World GKE Project!"
-# Add your remote repo URL (replace YOUR_GITHUB_USERNAME)
-git remote add origin https://github.com/gandinehru35-spec/k8s-hello-world-gke.git
-# Push local code to GitHub
-git push -u origin master   # Or main if branch is main
-git remote add origin https://github.com/gandinehru35-spec/k8s-hello-world-gke.git
-git branch -M main
-git push -u origin main
-git --version
-git remote add origin https://github.com/gandinehru35-spec/k8s-hello-world-gke.git
-git push -u origin master   # Or main if branch is main
-git push -u origin main   # Or main if branch is main
-cd 
-cd day1of7
-ls
-cd k8s-hello-world-gke
-git push -u origin main   # Or main if branch is main
-kubectl get pofs
-kubectl get pods
-cd day1of7
-ls
-docker build -t us-central-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2 .
-export PROJECT_ID=	alpine-anvil-473102-c4
-export PROJECT_ID=alpine-anvil-473102-c4
-docker build -t us-central-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2 .
-docker push us-central-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2
-gcloud auth login 
-gcloud auth configure-docker
-docker push us-central-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2
-docker push us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2
-docker build -t us-central-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2 .
-docker push us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2
-docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2 .
-docker push us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-app:v2
-kubectl apply -f deployment.yam
-kubectl apply -f deployment.yaml
-kubectl rollout status hello-deployment
-kubectl rollout status deployment/hello-deployment
-kubectl rollout history deployment/hello-deployment
-kubectl get pods
-kubectl apply -f deployment.yaml
-kubectl rollout status deployment/hello-deployment
-kubectl get all
-kubectl rollout status deployment/hello-deployment
-kubectl get all
-kubectl rollout status deployment/hello-deployment
-kubectl rollout history deployment/hello-deployment
-kubectl delete pod pod/hello-deployment-55c6f6564f-bb8gx
-kubectl delete pod hello-deployment-55c6f6564f-bb8gx
-kubectl get all
-kubectl describe pod hello-deployment-55c6f6564f-wcpbn
-kubectl get node
-kubectl top node 
-kubectl top pod
-kubectl apply -f deployment.yaml
-kubectl get all
-kubectl apply -f deployment.yaml
-kubectl get all
-kubectl delete pod -a
-kubectl delete pod -A
-kubectl delete pod --A
-kubectl delete pod hello-deployment-55c6f6564f-h9fhs
-kubectl delete pod hello-deployment-55c6f6564f-pbfql
-kubectl get pods
-kubectl rollout status deployment/hello-deployment
-kubectl rollout history deployment/hello-deployment
-kubectl get all
-kubectl top node
-kubectl top pod
-ls
-kubectl apply -f hpa.yaml
-kubectl get hpa
-kubectl get pods
-kubectl get all
-kubectl run -i --tty load-generator --image=busybox /bin/sh
-# Inside the pod, run a traffic generator:
-while true; do wget -q -O- http://hello-service; done
-kubectl get hpa -w
-kubectl delete hpa hello-hpa
-kubectl get all
-kubectl delete pod load-balancer
-kubectl delete pod load
-kubectl delete pod load-generator
+git init -b main
+clear

@@ -1,0 +1,39 @@
+2025-10-25 16:06:56.967 [warning] Dir "/home/gandinehru35/k8s/.pixi/envs" is not watchable (directory does not exist)
+2025-10-25 16:06:56.967 [info] Starting Environment refresh
+2025-10-25 16:06:56.967 [info] Starting Environment refresh
+2025-10-25 16:06:56.967 [info] > hatch env show --json
+2025-10-25 16:06:56.967 [info] cwd: .
+2025-10-25 16:06:56.967 [info] > pyenv which python
+2025-10-25 16:06:56.967 [info] cwd: .
+2025-10-25 16:06:56.972 [info] Environments refresh finished (event): 120 milliseconds
+2025-10-25 16:06:56.972 [info] Environments refresh finished (event): 92 milliseconds
+2025-10-25 16:06:56.972 [info] Environments refresh paths discovered: 121 milliseconds
+2025-10-25 16:06:56.972 [info] Environments refresh paths discovered: 92 milliseconds
+2025-10-25 16:06:56.976 [info] Environment refresh took 127 milliseconds
+2025-10-25 16:06:56.977 [info] Environment refresh took 97 milliseconds
+2025-10-25 16:06:56.994 [info] > pyenv which python
+2025-10-25 16:06:56.994 [info] cwd: .
+2025-10-25 16:06:57.052 [info] Running installed packages checker:  {
+  id: '/bin/python',
+  sysPrefix: '/usr',
+  envType: 'Global',
+  envName: '',
+  envPath: '/',
+  path: '/bin/python',
+  architecture: 3,
+  sysVersion: '3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]',
+  version: {
+    raw: '3.12.3',
+    major: 3,
+    minor: 12,
+    patch: 3,
+    build: [],
+    prerelease: [ 'final', '0' ]
+  },
+  displayName: 'Python 3.12.3 64-bit',
+  detailedDisplayName: 'Python 3.12.3 64-bit',
+  type: undefined
+} /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/installed_check.py /home/gandinehru35/app/requirements.txt
+2025-10-25 16:06:57.052 [info] > /bin/python /google/devshell/editor/code-oss-for-cloud-shell/extensions/ms-python.python/python_files/installed_check.py ~/app/requirements.txt
+2025-10-25 16:06:57.054 [info] Python interpreter path: /bin/python
+2025-10-25 16:06:59.691 [info] Starting Jedi language server for k8s.

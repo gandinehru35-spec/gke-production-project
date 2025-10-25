@@ -1,0 +1,79 @@
+Initializing document watcher...
+Document watcher initialized
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: Using EditorConfig core...
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/07-ingress.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: Using EditorConfig core...
+k8s/05-app-service.yaml: Using EditorConfig core...
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/05-app-service.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/06-managed-cert.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: Using EditorConfig core...
+k8s/05-app-service.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/04-app-deployment.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/13-prometheus-values.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: Using EditorConfig core...
+k8s/12-netpol-app.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/06-managed-cert.yaml: {}
+k8s/07-ingress.yaml: {}
+k8s/13-prometheus-values.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/07-ingress.yaml: {}

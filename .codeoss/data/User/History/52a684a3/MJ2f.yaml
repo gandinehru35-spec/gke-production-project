@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  selector:
+    app: hello
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080

@@ -1,0 +1,39 @@
+2025-10-24 21:21:28.014 [info] [main] Log level: Info
+2025-10-24 21:21:28.014 [info] [main] Validating found git in: "git"
+2025-10-24 21:21:28.014 [info] [main] Using git "2.43.0" from "git"
+2025-10-24 21:21:28.014 [info] [Model][doInitialScan] Initial repository scan started
+2025-10-24 21:21:28.014 [info] > git rev-parse --show-toplevel [1945ms]
+2025-10-24 21:21:28.014 [info] > git rev-parse --git-dir --git-common-dir [5ms]
+2025-10-24 21:21:28.014 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35
+2025-10-24 21:21:28.014 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35
+2025-10-24 21:21:28.014 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 21:21:28.123 [info] > git config --get commit.template [120ms]
+2025-10-24 21:21:28.136 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [124ms]
+2025-10-24 21:21:28.168 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [13ms]
+2025-10-24 21:21:28.719 [info] > git status -z -uall [575ms]
+2025-10-24 21:21:28.776 [info] > git check-ignore -v -z --stdin [10ms]
+2025-10-24 21:21:28.777 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [25ms]
+2025-10-24 21:21:28.784 [info] > git rev-parse --show-toplevel [309ms]
+2025-10-24 21:21:28.796 [info] > git config --get --local branch.master.vscode-merge-base [12ms]
+2025-10-24 21:21:28.797 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-24 21:21:28.803 [info] > git config --get commit.template [30ms]
+2025-10-24 21:21:28.814 [info] > git rev-parse --show-toplevel [20ms]
+2025-10-24 21:21:28.814 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 21:21:28.826 [info] > git reflog master --grep-reflog=branch: Created from *. [24ms]
+2025-10-24 21:21:29.015 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [195ms]
+2025-10-24 21:21:29.081 [info] > git status -z -uall [58ms]
+2025-10-24 21:21:29.082 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [49ms]
+2025-10-24 21:21:29.082 [info] > git rev-parse --show-toplevel [145ms]
+2025-10-24 21:21:29.128 [info] > git rev-parse --show-toplevel [34ms]
+2025-10-24 21:21:29.181 [info] > git rev-parse --show-toplevel [44ms]
+2025-10-24 21:21:29.193 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-24 21:21:29.364 [info] > git rev-parse --show-toplevel [161ms]
+2025-10-24 21:21:29.383 [info] > git rev-parse --show-toplevel [7ms]
+2025-10-24 21:21:29.397 [info] > git rev-parse --show-toplevel [5ms]
+2025-10-24 21:21:29.407 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 21:21:29.416 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 21:21:29.442 [info] > git rev-parse --show-toplevel [20ms]
+2025-10-24 21:21:29.453 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-24 21:21:29.461 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 21:21:29.469 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 21:21:29.471 [info] [Model][doInitialScan] Initial repository scan completed - repositories (1), closed repositories (0), parent repositories (0), unsafe repositories (0)

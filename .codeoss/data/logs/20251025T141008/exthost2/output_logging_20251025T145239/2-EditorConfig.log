@@ -1,0 +1,17 @@
+Initializing document watcher...
+Document watcher initialized
+k8s/07-ingress.yaml: {}
+No more open editors.
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+k8s/12-netpol-app.yaml: {}
+No more open editors.
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: {}
+k8s/05-app-service.yaml: {}
+/home/gandinehru35/app/requirements.txt: {}
+/home/gandinehru35/app/requirements.txt: {}
+k8s/08-hpa.yaml: {}
+k8s/08-hpa.yaml: Using EditorConfig core...
+k8s/08-hpa.yaml: Using EditorConfig core...

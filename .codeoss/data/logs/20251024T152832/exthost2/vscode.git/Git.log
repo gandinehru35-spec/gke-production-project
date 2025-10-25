@@ -1,0 +1,83 @@
+2025-10-24 18:07:01.863 [info] [main] Log level: Info
+2025-10-24 18:07:01.863 [info] [main] Validating found git in: "git"
+2025-10-24 18:07:01.863 [info] [main] Using git "2.43.0" from "git"
+2025-10-24 18:07:01.863 [info] [Model][doInitialScan] Initial repository scan started
+2025-10-24 18:07:01.863 [info] > git rev-parse --show-toplevel [25ms]
+2025-10-24 18:07:01.863 [info] > git rev-parse --git-dir --git-common-dir [4ms]
+2025-10-24 18:07:01.863 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35
+2025-10-24 18:07:01.863 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35
+2025-10-24 18:07:01.865 [info] > git config --get commit.template [3ms]
+2025-10-24 18:07:01.871 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:01.872 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [2ms]
+2025-10-24 18:07:01.888 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [3ms]
+2025-10-24 18:07:01.896 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 18:07:01.903 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-24 18:07:01.909 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 18:07:01.917 [info] > git status -z -uall [39ms]
+2025-10-24 18:07:02.115 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [170ms]
+2025-10-24 18:07:02.121 [info] > git rev-parse --show-toplevel [206ms]
+2025-10-24 18:07:02.130 [info] > git config --get --local branch.master.vscode-merge-base [10ms]
+2025-10-24 18:07:02.131 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-24 18:07:02.137 [info] > git config --get commit.template [24ms]
+2025-10-24 18:07:02.152 [info] > git rev-parse --show-toplevel [24ms]
+2025-10-24 18:07:02.157 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:02.390 [info] > git reflog master --grep-reflog=branch: Created from *. [254ms]
+2025-10-24 18:07:02.408 [info] > git rev-parse --show-toplevel [18ms]
+2025-10-24 18:07:02.409 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [252ms]
+2025-10-24 18:07:02.443 [info] > git rev-parse --show-toplevel [4ms]
+2025-10-24 18:07:02.444 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [14ms]
+2025-10-24 18:07:02.488 [info] > git status -z -uall [65ms]
+2025-10-24 18:07:02.491 [info] > git rev-parse --show-toplevel [36ms]
+2025-10-24 18:07:02.588 [info] > git check-ignore -v -z --stdin [61ms]
+2025-10-24 18:07:02.589 [info] > git rev-parse --show-toplevel [68ms]
+2025-10-24 18:07:02.670 [info] > git rev-parse --show-toplevel [73ms]
+2025-10-24 18:07:02.682 [info] > git rev-parse --show-toplevel [5ms]
+2025-10-24 18:07:02.691 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-24 18:07:02.700 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-24 18:07:02.712 [info] > git rev-parse --git-dir --git-common-dir [7ms]
+2025-10-24 18:07:02.720 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35/day1of7
+2025-10-24 18:07:02.720 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35/day1of7
+2025-10-24 18:07:02.733 [info] > git config --get commit.template [7ms]
+2025-10-24 18:07:02.740 [info] > git rev-parse --show-toplevel [8ms]
+2025-10-24 18:07:02.741 [info] [Model][doInitialScan] Initial repository scan completed - repositories (2), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2025-10-24 18:07:02.742 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [3ms]
+2025-10-24 18:07:05.094 [info] > git check-ignore -v -z --stdin [142ms]
+2025-10-24 18:07:05.095 [info] > git config --get commit.template [134ms]
+2025-10-24 18:07:05.122 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:05.135 [info] > git status -z -uall [30ms]
+2025-10-24 18:07:05.135 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [14ms]
+2025-10-24 18:07:05.152 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [39ms]
+2025-10-24 18:07:05.185 [info] > git status -z -uall [43ms]
+2025-10-24 18:07:05.186 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [19ms]
+2025-10-24 18:07:05.194 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [42ms]
+2025-10-24 18:07:05.197 [info] > git config --get commit.template [19ms]
+2025-10-24 18:07:05.208 [info] > git config --get --local branch.main.vscode-merge-base [14ms]
+2025-10-24 18:07:05.208 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-24 18:07:05.225 [info] > git reflog main --grep-reflog=branch: Created from *. [9ms]
+2025-10-24 18:07:05.235 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [10ms]
+2025-10-24 18:07:05.236 [info] > git symbolic-ref --short refs/remotes/origin/HEAD [3ms]
+2025-10-24 18:07:05.237 [info] fatal: ref refs/remotes/origin/HEAD is not a symbolic ref
+2025-10-24 18:07:05.237 [warning] [Repository][getDefaultBranch] Failed to get default branch details: Failed to execute git.
+2025-10-24 18:07:05.268 [info] > git status -z -uall [14ms]
+2025-10-24 18:07:05.268 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [5ms]
+2025-10-24 18:07:05.281 [info] > git merge-base refs/heads/main refs/remotes/origin/main [36ms]
+2025-10-24 18:07:05.291 [info] > git merge-base refs/heads/main refs/remotes/origin/main [12ms]
+2025-10-24 18:07:05.358 [info] > git diff --name-status -z --diff-filter=ADMR 5b8eff97886d0eb81632adb63562ee95e936655f...refs/remotes/origin/main [59ms]
+2025-10-24 18:07:05.359 [info] > git diff --name-status -z --diff-filter=ADMR 5b8eff97886d0eb81632adb63562ee95e936655f...refs/remotes/origin/main [70ms]
+2025-10-24 18:07:05.588 [info] > git check-ignore -v -z --stdin [62ms]
+2025-10-24 18:07:05.589 [info] > git check-ignore -v -z --stdin [55ms]
+2025-10-24 18:07:10.225 [info] > git config --get commit.template [4ms]
+2025-10-24 18:07:10.225 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:10.240 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [3ms]
+2025-10-24 18:07:10.268 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [4ms]
+2025-10-24 18:07:10.284 [info] > git status -z -uall [33ms]
+2025-10-24 18:07:16.274 [info] > git config --get commit.template [25ms]
+2025-10-24 18:07:16.295 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:16.298 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [4ms]
+2025-10-24 18:07:16.363 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [8ms]
+2025-10-24 18:07:16.413 [info] > git status -z -uall [89ms]
+2025-10-24 18:07:21.476 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 18:07:21.477 [info] > git config --get commit.template [14ms]
+2025-10-24 18:07:21.477 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [2ms]
+2025-10-24 18:07:21.511 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [8ms]
+2025-10-24 18:07:21.533 [info] > git status -z -uall [44ms]

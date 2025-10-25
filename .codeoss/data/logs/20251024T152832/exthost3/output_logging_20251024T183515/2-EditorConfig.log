@@ -1,0 +1,57 @@
+Initializing document watcher...
+Document watcher initialized
+gandinehru35/day1of7/deployment.yaml: {}
+gandinehru35/rbac-role.yaml: {}
+gandinehru35/rbac-role.yaml: {}
+gandinehru35/rbac-role.yaml: Using EditorConfig core...
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: Using EditorConfig core...
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/rbac-rolebinding.yaml: {}
+gandinehru35/day1of7/rbac-rolebinding.yaml: {}
+gandinehru35/day1of7/rbac-rolebinding.yaml: {}
+gandinehru35/day1of7/rbac-role.yaml: {}
+gandinehru35/day1of7/service.yaml: {}
+gandinehru35/day1of7/rbac-role.yaml: {}
+gandinehru35/day1of7/managed-cert.yaml: {}
+gandinehru35/day1of7/rbac-role.yaml: {}
+gandinehru35/day1of7/postgres-statefulset.yaml: {}
+gandinehru35/banking-app/k8s/secret.yaml: {}
+gandinehru35/day1of7/postgres-statefulset.yaml: {}
+gandinehru35/day1of7/db-secret.yaml: {}
+gandinehru35/day1of7/postgres-statefulset.yaml: {}
+gandinehru35/day1of7/postgres-service.yaml: {}
+gandinehru35/day1of7/Dockerfile: {}
+No more open editors.
+No more open editors.
+No more open editors.
+No more open editors.
+gandinehru35/day1of7/deployment.yaml: {}
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: Using EditorConfig core...
+gandinehru35/day1of7/deployment.yaml: {}
+gandinehru35/day1of7/deployment.yaml: {}
+gandinehru35/day1of7/deployment.yaml: {}
+gandinehru35/day1of7/network: {}
+gandinehru35/day1of7/network: {}
+gandinehru35/day1of7/network-policy.yaml: {}
+gandinehru35/day1of7/network-policy.yaml: Using EditorConfig core...
+gandinehru35/day1of7/network-policy.yaml: {}
+gandinehru35/day1of7/network-policy.yaml: {}
+gandinehru35/day1of7/network-policy.yaml: {}
+gandinehru35/day1of7/network-policy.yaml: {}
+No more open editors.
+No more open editors.

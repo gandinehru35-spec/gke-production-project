@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-to-db
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres # This policy applies to the database pod
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: hello-app # ONLY allow traffic from the app pods
+    ports:
+    - protocol: TCP
+      port: 5432 # To the postgres port

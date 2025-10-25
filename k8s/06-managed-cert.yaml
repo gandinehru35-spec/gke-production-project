@@ -1,0 +1,9 @@
+
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: hello-app-cert
+  namespace: prod
+spec:
+  domains:
+    - www.glamournest.store

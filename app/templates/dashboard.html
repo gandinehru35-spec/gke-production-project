@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GKE Cluster Dashboard (prod)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1a73e8;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        #dashboard {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .status-running { color: #34a853; font-weight: bold; }
+        .status-pending { color: #fbbc05; font-weight: bold; }
+        .status-failed { color: #ea4335; font-weight: bold; }
+        .bar-container {
+            width: 100px;
+            height: 16px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar {
+            height: 100%;
+            background-color: #4285f4;
+            border-radius: 4px 0 0 4px;
+            transition: width 0.3s ease-in-out;
+        }
+        .bar-memory { background-color: #34a853; }
+        .metrics-value {
+            font-size: 0.9em;
+            color: #555;
+            min-width: 60px;
+            display: inline-block;
+        }
+        #summary {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #summary span {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GKE Cluster Dashboard</h1>
+    <div id="summary">
+        Namespace: <strong>prod</strong> | Pod Count: <span id="pod-count">...</span>
+    </div>
+
+    <div id="dashboard">
+        <table>
+            <thead>
+                <tr>
+                    <th>Pod Name</th>
+                    <th>Status</th>
+                    <th>Node</th>
+                    <th>CPU Usage</th>
+                    <th>Memory Usage</th>
+                </tr>
+            </thead>
+            <tbody id="pod-table-body">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Helper function to parse CPU values like "1000m" (millicores) or "10n" (nanocores)
+        function parseCpu(cpuStr) {
+            if (!cpuStr) return 0;
+            if (cpuStr.endsWith('m')) {
+                return parseFloat(cpuStr) / 1000; // Convert millicores to cores
+            }
+            if (cpuStr.endsWith('n')) {
+                return parseFloat(cpuStr) / 1000000000; // Convert nanocores to cores
+            }
+            return parseFloat(cpuStr);
+        }
+
+        // Helper function to parse Memory values like "100Mi" or "10Gi"
+        function parseMemory(memStr) {
+            if (!memStr) return 0;
+            if (memStr.endsWith('Ki')) {
+                return parseFloat(memStr) * 1024;
+            }
+            if (memStr.endsWith('Mi')) {
+                return parseFloat(memStr) * 1024 * 1024;
+            }
+            if (memStr.endsWith('Gi')) {
+                return parseFloat(memStr) * 1024 * 1024 * 1024;
+            }
+            return parseFloat(memStr);
+        }
+
+        // Main function to fetch and render data
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/metrics');
+                const data = await response.json();
+                
+                // Update summary
+                document.getElementById('pod-count').textContent = data.pod_count || 0;
+
+                // Update table
+                const tableBody = document.getElementById('pod-table-body');
+                tableBody.innerHTML = ''; // Clear old data
+
+                data.pods.forEach(pod => {
+                    const row = document.createElement('tr');
+                    
+                    let metrics = pod.metrics;
+                    let cpuUsage = 0;
+                    let memUsage = 0;
+                    let cpuText = "0m";
+                    let memText = "0Mi";
+
+                    if (metrics && metrics.cpu) {
+                        cpuUsage = parseCpu(metrics.cpu);
+                        cpuText = metrics.cpu;
+                    }
+                    if (metrics && metrics.memory) {
+                        memUsage = parseMemory(metrics.memory);
+                        memText = metrics.memory;
+                    }
+
+                    // --- Create Simple Bar Graphs ---
+                    // Assuming 1 core (1000m) is 100% for CPU
+                    const cpuPercent = (cpuUsage / 1) * 100; 
+                    // Assuming 256Mi is 100% for Memory (based on our limit)
+                    const memPercent = (memUsage / (256 * 1024 * 1024)) * 100;
+
+                    row.innerHTML = `
+                        <td>${pod.name}</td>
+                        <td class="status-${pod.status.toLowerCase()}">${pod.status}</td>
+                        <td>${pod.node || 'N/A'}</td>
+                        <td>
+                            <span class="metrics-value">${cpuText}</span>
+                            <div class="bar-container">
+                                <div class="bar bar-cpu" style="width: ${cpuPercent.toFixed(2)}%;"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="metrics-value">${memText}</span>
+                            <div class="bar-container">
+                                <div class="bar bar-memory" style="width: ${memPercent.toFixed(2)}%;"></div>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                const tableBody = document.getElementById('pod-table-body');
+                tableBody.innerHTML = '<tr><td colspan="5" style="color: red; text-align: center;">Error loading data. Is the /metrics endpoint running?</td></tr>';
+            }
+        }
+
+        // Run the function now and then every 2 seconds
+        updateDashboard();
+        setInterval(updateDashboard, 2000); 
+    </script>
+</body>
+</html>

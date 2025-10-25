@@ -1,0 +1,65 @@
+# This file goes in your .github/workflows/ directory in your Git repo
+
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main # Trigger on push to main branch
+
+env:
+  PROJECT_ID: alpine-anvil-473102-c4
+  GKE_CLUSTER: hello-cluster
+  GKE_ZONE: us-central1-a
+  IMAGE_REPO: hello-repo
+  IMAGE_NAME: hello-app
+  K8S_DIR: k8s
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Authenticate to Google Cloud
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        # --- IMPORTANT ---
+        # Create a 'GCP_SA_KEY' secret in your GitHub repo settings
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    # Set up GKE credentials
+    - name: Get GKE credentials
+      uses: google-github-actions/get-gke-credentials@v1
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+
+    # Configure Docker
+    - name: Configure Docker
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+    # Build and push Docker image
+    - name: Build and Push
+      run: |
+        export IMAGE_PATH="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+        
+        # Build and push
+        docker build -t $IMAGE_PATH ./app
+        docker push $IMAGE_PATH
+        
+        # --- IMPORTANT ---
+        # This step updates the k8s/04-app-deployment.yaml file 
+        # with the new image tag before applying
+        sed -i "s|image:.*|image: $IMAGE_PATH|g" ${{ env.K8S_DIR }}/04-app-deployment.yaml
+
+    # Deploy to GKE
+    - name: Deploy
+      run: |
+        # Apply all manifests
+        # The 'apply' command is idempotent
+        kubectl apply -f ${{ env.K8S_DIR }}/

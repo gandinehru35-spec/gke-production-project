@@ -7,3 +7,9 @@
 2025-10-23 23:20:39.051 [info] [127.0.0.1][2420dec8][ManagementConnection] New connection established.
 2025-10-23 23:20:39.164 [info] [127.0.0.1][1e3aa808][ExtensionHostConnection] New connection established.
 2025-10-23 23:20:40.136 [info] [127.0.0.1][1e3aa808][ExtensionHostConnection] <1233> Launched Extension Host Process.
+2025-10-24 02:02:30.675 [info] [127.0.0.1][1e3aa808][ExtensionHostConnection] The client has reconnected.
+2025-10-24 02:02:30.804 [info] [127.0.0.1][2420dec8][ManagementConnection] The client has reconnected.
+2025-10-24 02:20:07.820 [info] [127.0.0.1][2420dec8][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+2025-10-24 02:26:01.560 [info] [127.0.0.1][2420dec8][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+2025-10-24 02:26:01.561 [info] [127.0.0.1][1e3aa808][ExtensionHostConnection] The client has reconnected.
+2025-10-24 02:26:01.715 [info] [127.0.0.1][2420dec8][ManagementConnection] The client has reconnected.

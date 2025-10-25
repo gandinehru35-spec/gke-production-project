@@ -1,0 +1,64 @@
+2025-10-24 14:35:43.897 [info] [main] Log level: Info
+2025-10-24 14:35:43.897 [info] [main] Validating found git in: "git"
+2025-10-24 14:35:43.897 [info] [main] Using git "2.43.0" from "git"
+2025-10-24 14:35:43.897 [info] [Model][doInitialScan] Initial repository scan started
+2025-10-24 14:35:43.914 [info] > git rev-parse --show-toplevel [34ms]
+2025-10-24 14:35:43.926 [info] > git rev-parse --git-dir --git-common-dir [4ms]
+2025-10-24 14:35:43.954 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35
+2025-10-24 14:35:43.954 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35
+2025-10-24 14:35:45.644 [info] > git check-ignore -v -z --stdin [36ms]
+2025-10-24 14:35:45.649 [info] > git config --get commit.template [62ms]
+2025-10-24 14:35:45.651 [info] > git rev-parse --show-toplevel [60ms]
+2025-10-24 14:35:45.657 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 14:35:45.664 [info] > git rev-parse --git-dir --git-common-dir [2ms]
+2025-10-24 14:35:45.670 [info] [Model][openRepository] Opened repository (path): /home/gandinehru35/day1of7
+2025-10-24 14:35:45.670 [info] [Model][openRepository] Opened repository (real path): /home/gandinehru35/day1of7
+2025-10-24 14:35:45.682 [info] > git config --get commit.template [6ms]
+2025-10-24 14:35:45.682 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [27ms]
+2025-10-24 14:35:45.696 [info] > git rev-parse --show-toplevel [16ms]
+2025-10-24 14:35:45.707 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [13ms]
+2025-10-24 14:35:45.709 [info] > git rev-parse --show-toplevel [3ms]
+2025-10-24 14:35:45.716 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 14:35:45.723 [info] > git rev-parse --show-toplevel [1ms]
+2025-10-24 14:35:45.729 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 14:35:45.735 [info] > git rev-parse --show-toplevel [1ms]
+2025-10-24 14:35:45.742 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 14:35:45.747 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [46ms]
+2025-10-24 14:35:45.748 [info] > git rev-parse --show-toplevel [2ms]
+2025-10-24 14:35:45.762 [info] > git rev-parse --show-toplevel [10ms]
+2025-10-24 14:35:45.920 [info] > git status -z -uall [232ms]
+2025-10-24 14:35:45.920 [info] > git status -z -uall [164ms]
+2025-10-24 14:35:45.920 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [159ms]
+2025-10-24 14:35:45.958 [info] > git rev-parse --show-toplevel [192ms]
+2025-10-24 14:35:45.975 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [19ms]
+2025-10-24 14:35:45.981 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [36ms]
+2025-10-24 14:35:48.312 [info] > git config --get --local branch.main.vscode-merge-base [2330ms]
+2025-10-24 14:35:48.312 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-24 14:35:48.320 [info] > git rev-parse --show-toplevel [2346ms]
+2025-10-24 14:35:48.320 [info] > git config --get commit.template [2351ms]
+2025-10-24 14:35:48.320 [info] > git config --get commit.template [2355ms]
+2025-10-24 14:35:49.017 [info] > git check-ignore -v -z --stdin [660ms]
+2025-10-24 14:35:49.052 [info] > git check-ignore -v -z --stdin [688ms]
+2025-10-24 14:35:49.053 [info] > git reflog main --grep-reflog=branch: Created from *. [734ms]
+2025-10-24 14:35:49.061 [info] > git config --get --local branch.master.vscode-merge-base [3074ms]
+2025-10-24 14:35:49.061 [warning] [Git][config] git config failed: Failed to execute git
+2025-10-24 14:35:49.078 [info] [Git][getRemotes] No remotes found in the git config file
+2025-10-24 14:35:49.108 [info] > git symbolic-ref --short refs/remotes/origin/HEAD [48ms]
+2025-10-24 14:35:49.108 [info] fatal: ref refs/remotes/origin/HEAD is not a symbolic ref
+2025-10-24 14:35:49.108 [warning] [Repository][getDefaultBranch] Failed to get default branch details: Failed to execute git.
+2025-10-24 14:35:49.120 [info] > git rev-parse --show-toplevel [419ms]
+2025-10-24 14:35:49.149 [info] > git merge-base refs/heads/main refs/remotes/origin/main [30ms]
+2025-10-24 14:35:49.165 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [80ms]
+2025-10-24 14:35:49.166 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/master refs/remotes/master [88ms]
+2025-10-24 14:35:49.197 [info] > git reflog master --grep-reflog=branch: Created from *. [129ms]
+2025-10-24 14:35:49.278 [info] > git status -z -uall [94ms]
+2025-10-24 14:35:49.279 [info] > git diff --name-status -z --diff-filter=ADMR 5b8eff97886d0eb81632adb63562ee95e936655f...refs/remotes/origin/main [114ms]
+2025-10-24 14:35:49.280 [info] > git rev-parse --show-toplevel [143ms]
+2025-10-24 14:35:49.280 [info] [Model][doInitialScan] Initial repository scan completed - repositories (2), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2025-10-24 14:35:49.332 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [135ms]
+2025-10-24 14:35:49.356 [info] > git status -z -uall [9ms]
+2025-10-24 14:35:49.356 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [5ms]
+2025-10-24 14:35:49.512 [info] > git show --textconv :deployment.yaml [83ms]
+2025-10-24 14:35:49.514 [info] > git ls-files --stage -- deployment.yaml [78ms]
+2025-10-24 14:35:49.527 [info] > git cat-file -s 85ce733a5a9d7b684b3bcea1d5119a8f0c9c0056 [6ms]
+2025-10-24 14:35:49.874 [info] > git blame --root --incremental 5b8eff97886d0eb81632adb63562ee95e936655f -- deployment.yaml [16ms]
